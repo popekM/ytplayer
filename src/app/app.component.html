@@ -1,4 +1,7 @@
-<p (click)="testInit()">init api</p>
-<p (click)="testQuery()">make request</p>
+<button mat-button routerLink="/">Player</button>
+<button mat-button routerLink="playlists">Manage Playlists</button><br><br>
+
+<button mat-raised-button color="primary" (click)="testInit()">init api</button>
+<button mat-raised-button color="accent" (click)="testQuery()">make request</button>
 
 <router-outlet></router-outlet>

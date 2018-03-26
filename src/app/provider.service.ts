@@ -7,6 +7,7 @@ export class ProviderService {
 
   constructor() { }
 
+  // initialize youtube api
   initApi() {
     this.ytapi.client.setApiKey("AIzaSyC_d4F0MGqp1JxMvSnPCte-YPJ2_V7-A6k");
     this.ytapi.client.load("youtube", "v3", function() {
