@@ -12,12 +12,4 @@ export class AppComponent {
 
   constructor(private provider: ProviderService){}
 
-  testInit() {
-    this.provider.initApi();
-  }
-
-  testQuery(){
-    this.provider.execQ();
-  }
-  
 }

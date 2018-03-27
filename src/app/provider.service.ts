@@ -6,6 +6,9 @@ export class ProviderService {
 
   ytapi = (<any>window).gapi || {};
 
+  // information if YouTube api was initialized
+  apiInitialized: boolean = false;
+
   data: any[] = [
     {
       name: 'test',
@@ -40,33 +43,64 @@ export class ProviderService {
   // currently active playlist
   activePlaylistState: any = this.data[0];
 
+  // stream of currently searched songs
+  songsList: any = new Subject();
+
   constructor() { }
 
   // initialize youtube api
   initApi() {
-    this.ytapi.client.setApiKey("AIzaSyC_d4F0MGqp1JxMvSnPCte-YPJ2_V7-A6k");
-    this.ytapi.client.load("youtube", "v3", function() {
-      // api is ready
-    });
-    console.log('API init done');
+    if (!this.apiInitialized) {
+      this.ytapi.client.setApiKey("AIzaSyC_d4F0MGqp1JxMvSnPCte-YPJ2_V7-A6k");
+      this.ytapi.client.load("youtube", "v3", function() {
+        // api is ready
+      });
+      this.apiInitialized = true;
+    }
   };
 
   // query execution
-  execQ() {
-    let result;
+  execQ(q) {
+    let temp = this.songsList;
     let request = this.ytapi.client.youtube.search.list({
-      q: 'linkin park',
+      q: q,
       part: 'snippet',
       maxResults: 10,
       type: "video"
     });
-    request.execute(function(response) {
-      console.log(response);
-      // console.log(response.result.items);
-      console.log('exec done');
-      result = response;
+
+    request.execute(function(response: any) {
+      let tempSongs: any = {
+        length: response.items.length,
+        items: []
+      };
+      for (let i = 0; i < response.items.length; i++) {
+        let song = {
+          id: response.items[i].id.videoId,
+          title: response.items[i].snippet.title,
+          duration: 0,
+          thumbnails: {
+            default: {
+              url: response.items[i].snippet.thumbnails.default.url,
+              width: response.items[i].snippet.thumbnails.default.width,
+              height: response.items[i].snippet.thumbnails.default.height,
+            },
+            high: {
+              url: response.items[i].snippet.thumbnails.high.url,
+              width: response.items[i].snippet.thumbnails.high.width,
+              height: response.items[i].snippet.thumbnails.high.height,
+            },
+            medium: {
+              url: response.items[i].snippet.thumbnails.medium.url,
+              width: response.items[i].snippet.thumbnails.medium.width,
+              height: response.items[i].snippet.thumbnails.medium.height,
+            }
+          }
+        };
+        tempSongs.items.push(song);
+      }
+      temp.next(tempSongs);
     });
-    return result;
   };
 
   // return all playlists data
@@ -79,6 +113,11 @@ export class ProviderService {
     return Observable.from(this.activePlaylist).startWith(this.activePlaylistState);
   }
 
+  // return currently searched songs ( stream)
+  getSongs = function() {
+    return Observable.from(this.songsList);
+  }
+
   // change active playlist
   changeActivePlaylist(pl) {
     this.activePlaylistState = pl;
@@ -88,5 +127,4 @@ export class ProviderService {
   addPlaylist(pl) {
     this.data.push(pl);
   }
-
 }
