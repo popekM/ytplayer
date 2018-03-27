@@ -1,3 +1,15 @@
-<p>
-  addplaylist works!
-</p>
+<button mat-raised-button color="primary" (click)="createPlaylistForm=true" [disabled]="createPlaylistForm">Create playlist</button>
+<form (ngSubmit)="addPlaylist()" *ngIf="createPlaylistForm">
+
+  <mat-form-field class="form-field">
+    <input matInput type="text" name="name" placeholder="Playlist Name:" [(ngModel)]="nameValue"/>
+  </mat-form-field>
+  <br>
+  <mat-form-field class="form-field">
+    <input matInput type="color" name="color" placeholder="Playlist Accent Color:" [(ngModel)]="colorValue"/>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Add Playlist</button>
+  <button mat-raised-button color="warning" (click)="abandon()">Close</button>
+
+</form>

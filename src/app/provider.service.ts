@@ -37,6 +37,8 @@ export class ProviderService {
 
   // stream of currently active playlist
   activePlaylist: any = new Subject();
+  // currently active playlist
+  activePlaylistState: any = this.data[0];
 
   constructor() { }
 
@@ -74,12 +76,17 @@ export class ProviderService {
 
   // return currently active playlist ( stream)
   getActivePlaylist = function() {
-    return Observable.from(this.activePlaylist).startWith(this.data[0]);
+    return Observable.from(this.activePlaylist).startWith(this.activePlaylistState);
   }
 
   // change active playlist
   changeActivePlaylist(pl) {
+    this.activePlaylistState = pl;
     this.activePlaylist.next(pl);
+  }
+
+  addPlaylist(pl) {
+    this.data.push(pl);
   }
 
 }
