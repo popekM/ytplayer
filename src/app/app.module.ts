@@ -5,7 +5,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 
 import {
-  MatButtonModule
+  MatButtonModule,
+  MatListModule,
+  MatToolbarModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -36,7 +38,9 @@ import { SearchformComponent } from './searchform.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatListModule,
+    MatToolbarModule
   ],
   providers: [ProviderService],
   bootstrap: [AppComponent]

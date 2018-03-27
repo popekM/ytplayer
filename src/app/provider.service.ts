@@ -1,9 +1,42 @@
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class ProviderService {
 
   ytapi = (<any>window).gapi || {};
+
+  data: any[] = [
+    {
+      name: 'test',
+      color: '#ab1111',
+      tracks: [
+        {
+          title: 'title1',
+          duration: 23,
+          id: '$dfvb'
+        },
+        {
+          title: 'title7',
+          duration: 34,
+          id: '$drefgb'
+        }
+      ]
+    },
+    {
+      name: 'test2',
+      color: '#a8da1b',
+      tracks: []
+    },
+    {
+      name: 'test3',
+      color: '#1c8dbe',
+      tracks: []
+    }
+  ];
+
+  // stream of currently active playlist
+  activePlaylist: any = new Subject();
 
   constructor() { }
 
@@ -33,5 +66,20 @@ export class ProviderService {
     });
     return result;
   };
+
+  // return all playlists data
+  getPlaylists() {
+    return this.data;
+  }
+
+  // return currently active playlist ( stream)
+  getActivePlaylist = function() {
+    return Observable.from(this.activePlaylist).startWith(this.data[0]);
+  }
+
+  // change active playlist
+  changeActivePlaylist(pl) {
+    this.activePlaylist.next(pl);
+  }
 
 }
