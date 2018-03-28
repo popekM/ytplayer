@@ -26,7 +26,11 @@ import { ChangeDetectorRef } from '@angular/core';
 
    <mat-card-actions>
      <button mat-button>Play</button>
-     <button mat-button>Add to Playlist</button>
+     <button mat-button [matMenuTriggerFor]="menu">Add to Playlist</button>
+      <mat-menu #menu="matMenu" [class]="hid">
+        <button *ngFor="let b of playlists" mat-menu-item (click)="addSong(i, b)" [style.borderColor]="b.color">{{ b.name }}</button>
+      </mat-menu>
+
    </mat-card-actions>
   </mat-card>
  </div>
@@ -42,7 +46,6 @@ import { ChangeDetectorRef } from '@angular/core';
       border: 1px solid #000;
     }
     .mat-card:hover {
-      color: #000;
       background: #c2185b;
       border: 1px solid #c2185b;
     }
@@ -62,7 +65,6 @@ import { ChangeDetectorRef } from '@angular/core';
       width: 100%;
       z-index: 2;
     }
-
     .overlay {
       position: absolute;
       top: 0;
@@ -72,7 +74,6 @@ import { ChangeDetectorRef } from '@angular/core';
       background: rgba(0, 0, 0, 0.8);
       z-index: 1;
     }
-
     .overlay span {
       position: absolute;
       display: block;
@@ -80,13 +81,16 @@ import { ChangeDetectorRef } from '@angular/core';
       right: 40px;
       font-size: 60px;
     }
-        .card-overlay {
+    .card-overlay {
       position: absolute;
       top: 100px;
       left: 0;
       width: 100%;
       min-height: 200px;
       z-index: 2;
+    }
+    .mat-menu-item{
+      border-left: 5px solid;
     }
   `]
 })
@@ -99,13 +103,15 @@ export class SearchformComponent implements OnInit {
   };
   initalized: boolean = false;
   overlay: boolean = false;
-
+  playlists: any[];
 
   constructor(private provider: ProviderService, private ref: ChangeDetectorRef) {
 
   }
 
   ngOnInit() {
+    this.playlists = this.provider.getPlaylists();
+
     this.searchForm = new FormGroup({
       'query': new FormControl('')
     });
@@ -137,17 +143,22 @@ export class SearchformComponent implements OnInit {
     }
 
     // display overlay
-    this.overlay=true;
+    this.overlay = true;
   }
 
   exitSearchMode() {
-    this.overlay=false;
+    this.overlay = false;
   }
 
-
   searchModeBlur() {
-    if(this.searchForm.get('query').value.length < 2){
+    if (this.searchForm.get('query').value.length < 2) {
       this.exitSearchMode();
     }
   }
+
+  addSong(song, playlist) {
+    this.provider.addSong(song, playlist);
+    document.getElementsByClassName('mat-menu-panel')[0].innerHTML = '';
+  }
+
 }

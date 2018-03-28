@@ -11,30 +11,76 @@ export class ProviderService {
 
   data: any[] = [
     {
-      name: 'test',
-      color: '#ab1111',
-      tracks: [
+      name:"Default",
+      color:"#1194ab",
+      tracks:[
         {
-          title: 'title1',
-          duration: 23,
-          id: '$dfvb'
+          id:"eMqsWc8muj8",
+          title:"Muse - Bliss",
+          duration:0,
+          thumbnails:{
+            default:{
+              url:"https://i.ytimg.com/vi/eMqsWc8muj8/default.jpg",
+              width:120,
+              height:90
+            },
+            high:{
+              url:"https://i.ytimg.com/vi/eMqsWc8muj8/hqdefault.jpg",
+              width:480,
+              height:360
+            },
+            medium:{
+              url:"https://i.ytimg.com/vi/eMqsWc8muj8/mqdefault.jpg",
+              width:320,
+              height:180
+            }
+          }
         },
         {
-          title: 'title7',
-          duration: 34,
-          id: '$drefgb'
+          id:"Om_VWBua0_M",
+          title:"Foxy Shazam - \"Oh Lord\" [Official Music Video]",
+          duration:0,
+          thumbnails:{
+            default:{
+              url:"https://i.ytimg.com/vi/Om_VWBua0_M/default.jpg",
+              width:120,
+              height:90
+            },
+            high:{
+              url:"https://i.ytimg.com/vi/Om_VWBua0_M/hqdefault.jpg",
+              width:480,
+              height:360
+            },
+            medium:{
+              url:"https://i.ytimg.com/vi/Om_VWBua0_M/mqdefault.jpg",
+              width:320,
+              height:180
+            }
+          }
+        },
+        {
+          id:"RYnFIRc0k6E",
+          title:"Limp Bizkit - Rollin' (Air Raid Vehicle)",
+          duration:0,
+          thumbnails:{
+            default:{
+              url:"https://i.ytimg.com/vi/RYnFIRc0k6E/default.jpg",
+              width:120,
+              height:90
+            },
+            high:{
+              url:"https://i.ytimg.com/vi/RYnFIRc0k6E/hqdefault.jpg",
+              width:480,
+              height:360
+            },
+            medium:{
+              url:"https://i.ytimg.com/vi/RYnFIRc0k6E/mqdefault.jpg",
+              width:320,
+              height:180
+            }
+          }
         }
       ]
-    },
-    {
-      name: 'test2',
-      color: '#a8da1b',
-      tracks: []
-    },
-    {
-      name: 'test3',
-      color: '#1c8dbe',
-      tracks: []
     }
   ];
 
@@ -127,4 +173,11 @@ export class ProviderService {
   addPlaylist(pl) {
     this.data.push(pl);
   }
+
+  //adds song to active playlist
+  addSong(song, playlist) {
+    let index = this.data.indexOf(playlist);
+    this.data[index].tracks.push(song);
+  }
+
 }

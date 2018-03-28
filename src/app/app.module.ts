@@ -6,10 +6,12 @@ import { AppRoutingModule } from './app-routing.module';
 
 import {
   MatButtonModule,
+  MatButtonToggleModule,
   MatListModule,
   MatToolbarModule,
   MatInputModule,
-  MatCardModule
+  MatCardModule,
+  MatMenuModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -43,10 +45,12 @@ import { SearchformComponent } from './searchform.component';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatListModule,
     MatToolbarModule,
     MatInputModule,
-    MatCardModule
+    MatCardModule,
+    MatMenuModule
   ],
   providers: [ProviderService],
   bootstrap: [AppComponent]

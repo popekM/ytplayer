@@ -4,9 +4,6 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-playlists',
   template: `
-    <p>
-      playlists works!
-    </p>
     <app-addplaylist></app-addplaylist>
     <app-displayplaylists></app-displayplaylists>
     <app-displaytracks></app-displaytracks>
