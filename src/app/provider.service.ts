@@ -65,7 +65,7 @@ export class ProviderService {
     let request = this.ytapi.client.youtube.search.list({
       q: q,
       part: 'snippet',
-      maxResults: 10,
+      maxResults: 14,
       type: "video"
     });
 

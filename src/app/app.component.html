@@ -1,8 +1,18 @@
-<button mat-button routerLink="/">Player</button>
-<button mat-button routerLink="playlists">Manage Playlists</button><br><br>
-
-<br><br>
+<mat-toolbar color="basic">
+  <span>Application Title</span>
+  <!-- This fills the remaining space of the current row -->
+  <span class="fill-remaining-space"></span>
 <app-searchform></app-searchform>
-<br><br>
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="fill-remaining-space"></span>
+
+  <button mat-button routerLink="/">Player</button>
+  <button mat-button routerLink="playlists">Manage Playlists</button>
+</mat-toolbar>
+
+
+
+
 
 <router-outlet></router-outlet>
