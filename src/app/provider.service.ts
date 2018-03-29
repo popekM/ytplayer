@@ -81,6 +81,11 @@ export class ProviderService {
           }
         }
       ]
+    },
+    {
+      name:"asd",
+      color:"#11ab3c",
+      tracks:[]
     }
   ];
 
@@ -91,6 +96,9 @@ export class ProviderService {
 
   // stream of currently searched songs
   songsList: any = new Subject();
+
+  // currently selected songs
+  activeSong: any = new Subject();
 
   constructor() { }
 
@@ -180,4 +188,11 @@ export class ProviderService {
     this.data[index].tracks.push(song);
   }
 
+  getSongsToPlay() {
+      return Observable.from(this.activeSong);
+  }
+
+  playSong(id){
+    this.activeSong.next(id);
+  }
 }

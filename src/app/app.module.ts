@@ -11,7 +11,8 @@ import {
   MatToolbarModule,
   MatInputModule,
   MatCardModule,
-  MatMenuModule
+  MatMenuModule,
+  MatSelectModule,
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -24,6 +25,7 @@ import { PlayerComponent } from './player/player.component';
 import { SelectplaylistComponent } from './player/selectplaylist.component';
 import { SelecttrackComponent } from './player/selecttrack.component';
 import { SearchformComponent } from './searchform.component';
+import { IframeVideoComponent } from './player/iframe-video.component';
 
 
 @NgModule({
@@ -36,7 +38,8 @@ import { SearchformComponent } from './searchform.component';
     PlayerComponent,
     SelectplaylistComponent,
     SelecttrackComponent,
-    SearchformComponent
+    SearchformComponent,
+    IframeVideoComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +53,8 @@ import { SearchformComponent } from './searchform.component';
     MatToolbarModule,
     MatInputModule,
     MatCardModule,
-    MatMenuModule
+    MatMenuModule,
+    MatSelectModule
   ],
   providers: [ProviderService],
   bootstrap: [AppComponent]
