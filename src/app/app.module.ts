@@ -13,6 +13,7 @@ import {
   MatCardModule,
   MatMenuModule,
   MatSelectModule,
+  MatSliderModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -54,7 +55,8 @@ import { IframeVideoComponent } from './player/iframe-video.component';
     MatInputModule,
     MatCardModule,
     MatMenuModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSliderModule
   ],
   providers: [ProviderService],
   bootstrap: [AppComponent]

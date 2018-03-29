@@ -100,6 +100,9 @@ export class ProviderService {
   // currently selected songs
   activeSong: any = new Subject();
 
+  // currentyl played songId
+  songId: string = '';
+
   constructor() { }
 
   // initialize youtube api
@@ -192,7 +195,55 @@ export class ProviderService {
       return Observable.from(this.activeSong);
   }
 
-  playSong(id){
+  // send ID of song to play to player
+  playSong(id) {
+    this.songId = id;
     this.activeSong.next(id);
   }
+
+  // pick ID of song to play from currently active playlist
+  // parameters:
+  //            s - shuffle: 0 - next song, 1 - random pick
+  //            r - repeat: 0 - dont - repeat playlis, 1 - repeat whole playlist, 2 - repeat 1 song
+  playNext(s: number, r: number) {
+    let temp: string = '';
+    let length: number = this.activePlaylistState.tracks.length;
+    let trackIndex: number = 0;
+
+    if(r===2){
+      // repeat 1 song
+      this.playSong(this.songId);
+    } else {
+      if(s===1){
+        // random pick
+        trackIndex = Math.floor(Math.random()*length);
+        this.songId = this.activePlaylistState.tracks[trackIndex].id;
+        this.playSong(this.songId);
+      }else{
+        // play next in list
+        for(let i=0; i<length; i++){
+          if(this.activePlaylistState.tracks[i].id === this.songId){
+            trackIndex = i;
+            break;
+          }
+        }
+        if((trackIndex+1)!==length){
+          // not last song in list
+          trackIndex++;
+          this.songId = this.activePlaylistState.tracks[trackIndex].id;
+          this.playSong(this.songId);
+        }else{
+          // last song in list
+          if(r===0) {
+            // don't repeat playlist
+          }else{
+            // play pla
+            this.songId = this.activePlaylistState.tracks[trackIndex].id;
+            this.playSong(this.songId);
+          }
+        }
+      }
+    }
+  }
+
 }
