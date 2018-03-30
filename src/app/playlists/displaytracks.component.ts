@@ -5,12 +5,12 @@ import { ProviderService } from '../provider.service';
   selector: 'app-displaytracks',
   template: `
     <h2 [style.backgroundColor]="playlist.color">
-      {{ playlist.name }}
+      {{ playlist.name }}:
     </h2>
-    <ul>
+
     <mat-toolbar *ngIf="playlist.tracks.length!=0">
       <mat-toolbar-row *ngFor="let i of playlist.tracks; let j =index">
-        <span>{{ i.title }}</span>
+        <span class="title">{{ i.title }}</span>
         <span class="spacer"></span>
 
         <i class="material-icons" (click)="moveTop(i)" [class.dark]="j<2">vertical_align_top</i>
@@ -22,14 +22,25 @@ import { ProviderService } from '../provider.service';
     </mat-toolbar>
   `,
   styles: [`
-    :host() {
-      display: block;
-      margin: 15px;
-      padding: 15px;
-      border: 1px solid rgb(19, 186, 215);
+    h2 {
+      margin: 0;
+      padding: 20px;
+    }
+
+    i {
+      color: #808080;
+      cursor: pointer;
+    }
+    i:hover:not(.dark){
+      color: #fff;
     }
     span {
-      color: rgba(255, 255, 255, 0.3)
+      color: #fff;
+      font-size: 16px;
+    }
+    .title{
+      max-width: 500px;
+      overflow: hidden;
     }
     .material-icons {
   padding: 0 6px;
@@ -37,12 +48,14 @@ import { ProviderService } from '../provider.service';
 
 .spacer {
   flex: 1 1 auto;
-}    h2 {
-      display: block;
-      width: 100%;
-    }
+}
+
     .dark{
       color: #373737;
+      cursor: default;
+    }
+    mat-toolbar-row{
+      background: #000;
     }
   `]
 })

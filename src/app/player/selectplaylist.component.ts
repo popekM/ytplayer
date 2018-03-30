@@ -5,7 +5,7 @@ import { ProviderService } from '../provider.service';
   selector: 'app-selectplaylist',
   template: `
   <mat-form-field [style.backgroundColor]="activePlaylist.color">
-    <mat-select [value]="activePlaylist.name" (change)="changePlaylist($event)">
+    <mat-select placeholder="Playlist:" [value]="activePlaylist.name" (change)="changePlaylist($event)">
       <mat-option *ngFor="let i of playlists" [value]="i.name" [style.borderColor]="i.color">{{i.name}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -16,6 +16,7 @@ import { ProviderService } from '../provider.service';
         border-left: 5px solid;
       }
       mat-form-field {
+        padding-top: 10px;
         padding-left: 20px;
         padding-right: 20px;
         width: 340px;

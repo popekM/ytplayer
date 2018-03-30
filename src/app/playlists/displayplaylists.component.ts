@@ -5,9 +5,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 @Component({
   selector: 'app-displayplaylists',
   template: `
-    <h2>
-      Playlists:
-    </h2>
+
+  <h2>Playlists:<ng-content></ng-content></h2>
 
     <mat-nav-list>
       <a mat-list-item
@@ -16,26 +15,39 @@ import { ConfirmationDialogComponent } from './confirmation-dialog.component';
         [style.borderColor]="i.color"
         (click)="changePlaylist(i)">
           {{ i.name }}
-          <span>&nbsp;( {{ i.tracks.length }} )</span><i class="material-icons" (click)="deletePlaylist(i)">delete</i>
+          <span>&nbsp;( {{ i.tracks.length }} )</span>
+              <span class="spacer"></span>
+              <i class="material-icons" (click)="deletePlaylist(i)">delete</i>
       </a>
 
     </mat-nav-list>
   `,
   styles: [`
-    :host() {
-      display: block;
-      margin: 15px;
-      padding: 15px;
-      border: 1px solid rgb(156, 179, 14);
+    :host(){
+      margin-left: 20px;
+    }
+    h2 {
+      margin: 0;
+      padding: 20px;
+      background: #b10d4e;
     }
     a {
       border-left: 5px solid red;
     }
-    span {
-      color: rgba(255, 255, 255, 0.3)
+    span, i {
+      color: #787878;
+    }
+    i:hover{
+      color: #fff;
+    }
+    .spacer {
+      flex: 1 1 auto;
     }
     .active {
       background: rgba(255, 255, 255, 0.1);
+    }
+    mat-nav-list{
+      padding: 20px;
     }
   `]
 })

@@ -45,6 +45,9 @@ export class SelecttrackComponent implements OnInit {
     this.provider.getActivePlaylist().subscribe((response)=>{
       this.playlist = response;
     });
+    this.provider.getSongsToPlay().subscribe((response) => {
+      this.idActive = <string>response;
+    });
   }
 
   playSong(id){

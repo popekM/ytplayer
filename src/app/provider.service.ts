@@ -86,6 +86,16 @@ export class ProviderService {
       name:"asd",
       color:"#11ab3c",
       tracks:[]
+    },
+    {
+      name:"sdf",
+      color:"#ff0000",
+      tracks:[]
+    },
+    {
+      name:"dfg",
+      color:"#bbff2b",
+      tracks:[]
     }
   ];
 
@@ -242,7 +252,7 @@ export class ProviderService {
             // don't repeat playlist
           }else{
             // play pla
-            this.songId = this.activePlaylistState.tracks[trackIndex].id;
+            this.songId = this.activePlaylistState.tracks[0].id;
             this.playSong(this.songId);
           }
         }
@@ -291,5 +301,5 @@ export class ProviderService {
     }
     this.activePlaylist.next(this.data[playlistIndex]);
   }
-  
+
 }

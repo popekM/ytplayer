@@ -26,8 +26,8 @@ import { ProviderService } from '../provider.service';
 
       <mat-grid-tile colspan="2" rowspan="2">
         <i class="material-icons small" (click)="toggleRandom()" [class.active]="repeatSettings.randomPlay">shuffle</i>
-        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="repeatSettings.repeatMode!=2" [class.active]="repeatSettings.repeatMode">repeat</i>
-        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="repeatSettings.repeatMode==2" [class.active]="repeatSettings.repeatMode">repeat_one</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="repeatSettings.repeatMode!==2" [class.active]="repeatSettings.repeatMode">repeat</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="repeatSettings.repeatMode===2" [class.active]="repeatSettings.repeatMode">repeat_one</i>
         <span class="spacer">&nbsp;</span>
         <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
         <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
@@ -248,6 +248,7 @@ export class IframeVideoComponent implements OnInit {
   }
 
   playNextSong() {
+    console.log('play next', this.repeatSettings.repeatMode);
     this.provider.playNext(this.repeatSettings.randomPlay, this.repeatSettings.repeatMode);
   }
 

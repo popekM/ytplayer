@@ -4,11 +4,28 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-playlists',
   template: `
-    <app-addplaylist></app-addplaylist>
-    <app-displayplaylists></app-displayplaylists>
+
+    <app-displayplaylists><app-addplaylist></app-addplaylist></app-displayplaylists>
     <app-displaytracks></app-displaytracks>
   `,
-  styles: []
+  styles: [`
+    :host(){
+      float:left;
+      padding: 20px;
+    }
+    app-displayplaylists {
+      display: block;
+      width: 900px;
+      background: black;
+      float: right;
+    }
+    app-displaytracks{
+      display: block;
+      width: 900px;
+      float: right;
+    }
+
+  `]
 })
 export class PlaylistsComponent implements OnInit {
 
