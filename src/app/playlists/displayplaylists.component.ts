@@ -1,21 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ProviderService } from '../provider.service';
-
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 @Component({
   selector: 'app-displayplaylists',
   template: `
     <h2>
       Playlists:
     </h2>
-    <ul>
+
     <mat-nav-list>
       <a mat-list-item
         *ngFor="let i of playlists"
         [class.active]="i == activePlaylist"
         [style.borderColor]="i.color"
         (click)="changePlaylist(i)">
-          {{ i.name }}  <span>&nbsp;( {{ i.tracks.length }} )</span>
+          {{ i.name }}
+          <span>&nbsp;( {{ i.tracks.length }} )</span><i class="material-icons" (click)="deletePlaylist(i)">delete</i>
       </a>
+
     </mat-nav-list>
   `,
   styles: [`
@@ -40,8 +43,9 @@ export class DisplayplaylistsComponent implements OnInit {
 
   playlists: any[];
   activePlaylist: any;
+  dialogW: MatDialogRef<ConfirmationDialogComponent>;
 
-  constructor(private provider: ProviderService) { }
+  constructor(private provider: ProviderService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.playlists = this.provider.getPlaylists();
@@ -52,5 +56,15 @@ export class DisplayplaylistsComponent implements OnInit {
 
   changePlaylist(pl) {
     this.provider.changeActivePlaylist(pl);
+  }
+
+  deletePlaylist(i){
+    let pR = this.provider;
+    this.dialogW = this.dialog.open(ConfirmationDialogComponent);
+    this.dialogW.afterClosed().subscribe(result => {
+      if(result){
+        pR.deletePlaylist(i);
+      }
+    });
   }
 }

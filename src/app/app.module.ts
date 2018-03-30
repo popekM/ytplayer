@@ -13,7 +13,9 @@ import {
   MatCardModule,
   MatMenuModule,
   MatSelectModule,
-  MatSliderModule
+  MatSliderModule,
+  MatDialogModule,
+  MatGridListModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -27,6 +29,7 @@ import { SelectplaylistComponent } from './player/selectplaylist.component';
 import { SelecttrackComponent } from './player/selecttrack.component';
 import { SearchformComponent } from './searchform.component';
 import { IframeVideoComponent } from './player/iframe-video.component';
+import { ConfirmationDialogComponent } from './playlists/confirmation-dialog.component';
 
 
 @NgModule({
@@ -40,7 +43,11 @@ import { IframeVideoComponent } from './player/iframe-video.component';
     SelectplaylistComponent,
     SelecttrackComponent,
     SearchformComponent,
-    IframeVideoComponent
+    IframeVideoComponent,
+    ConfirmationDialogComponent
+  ],
+  entryComponents: [
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +63,9 @@ import { IframeVideoComponent } from './player/iframe-video.component';
     MatCardModule,
     MatMenuModule,
     MatSelectModule,
-    MatSliderModule
+    MatSliderModule,
+    MatDialogModule,
+    MatGridListModule
   ],
   providers: [ProviderService],
   bootstrap: [AppComponent]

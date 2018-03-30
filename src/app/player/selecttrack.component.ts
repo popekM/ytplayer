@@ -4,24 +4,40 @@ import { ProviderService } from '../provider.service';
 @Component({
   selector: 'app-selecttrack',
   template: `
-  <h2 [style.backgroundColor]="playlist.color">
-    {{ playlist.name }}
-  </h2>
-  <ul>
   <mat-toolbar *ngIf="playlist.tracks.length!=0">
-    <mat-toolbar-row *ngFor="let i of playlist.tracks" (click)="playSong(i.id)">
+    <mat-toolbar-row *ngFor="let i of playlist.tracks" (click)="playSong(i.id)" [class.active]="i.id === idActive">
+      <img [src]="i.thumbnails.default.url" alt="Thumbnail">
       <span>{{ i.title }}</span>
-      <span class="example-spacer"></span>
-      <span>{{ i.duration }}</span>
-
     </mat-toolbar-row>
   </mat-toolbar>
   `,
-  styles: []
+  styles: [`
+    mat-toolbar-row {
+      height: 64px;
+      overflow: hidden;
+      font-size: 16px;
+      padding: 2px;
+    }
+    mat-toolbar-row:not(.active):hover {
+      background: #313131;
+    }
+    img {
+      width: 80px;
+      height: 60px;
+      padding-right: 5px;
+      position: relative;
+    text-align: center;
+    color: white;
+    }
+    .active {
+      background: #c2185b;
+    }
+    `]
 })
 export class SelecttrackComponent implements OnInit {
 
   playlist: any[];
+  idActive: string = '';
 
   constructor(private provider: ProviderService) { }
 
@@ -33,6 +49,7 @@ export class SelecttrackComponent implements OnInit {
 
   playSong(id){
     this.provider.playSong(id);
+    this.idActive = id;
     console.log('wyslano do providera', id);
   }
 }

@@ -183,6 +183,10 @@ export class ProviderService {
 
   addPlaylist(pl) {
     this.data.push(pl);
+    if(this.data.length==1){
+      this.activePlaylistState = this.data[0];
+      this.activePlaylist.next(this.activePlaylistState);
+    }
   }
 
   //adds song to active playlist
@@ -246,4 +250,46 @@ export class ProviderService {
     }
   }
 
+  deletePlaylist(i) {
+    this.data.splice(this.data.indexOf(i),1);
+
+    if(this.data.indexOf(this.activePlaylistState)===(-1)){
+      if(this.data.length>0){
+        this.activePlaylistState = this.data[0];
+      }else{
+        this.activePlaylistState = { name: 'No playlists', color: '#b10000', tracks: []};
+      }
+      this.activePlaylist.next(this.activePlaylistState);
+    }
+  }
+
+  // i - song to change, a - action:
+  //                      0 - move top
+  //                      1 - move up
+  //                      2 - move down
+  //                      3 - move bottom
+  //                      4 - delete
+  manageTracks(i, a){
+    let playlistIndex = this.data.indexOf(this.activePlaylistState);
+    let songIndex = this.data[playlistIndex].tracks.indexOf(i);
+    let length =  this.data[playlistIndex].tracks.length;
+    this.data[playlistIndex].tracks.splice(songIndex, 1);
+    if(a===0){
+      this.data[playlistIndex].tracks.unshift(i);
+    }else if(a===1){
+      if(songIndex!=0){
+        songIndex--;
+      }
+      this.data[playlistIndex].tracks.splice(songIndex, 0, i);
+    }else if(a===2){
+      if(++songIndex==length){
+        songIndex--;
+      }
+      this.data[playlistIndex].tracks.splice(songIndex, 0, i);
+    }else if(a===3){
+      this.data[playlistIndex].tracks.push(i);
+    }
+    this.activePlaylist.next(this.data[playlistIndex]);
+  }
+  
 }

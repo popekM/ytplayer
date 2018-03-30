@@ -11,7 +11,10 @@ import { ChangeDetectorRef } from '@angular/core';
   <div class="overlay" *ngIf="overlay"><span (click)="exitSearchMode()">x</span></div>
   <form [formGroup]="searchForm">
     <mat-form-field class="form-field">
-     <input matInput formControlName="query" type="text" class="form-control" placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
+     <input matInput formControlName="query" type="text" class="form-control" #forClear placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
+     <button mat-button *ngIf="forClear.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="forClear.value=''; clearInput()">
+    x
+      </button>
     </mat-form-field>
 
  </form>
@@ -95,7 +98,7 @@ import { ChangeDetectorRef } from '@angular/core';
   `]
 })
 export class SearchformComponent implements OnInit {
-
+aaa;
   searchForm: FormGroup;
   songsBuffer: any = {
     length: 0,
@@ -151,9 +154,16 @@ export class SearchformComponent implements OnInit {
   }
 
   searchModeBlur() {
-    if (this.searchForm.get('query').value.length < 2) {
+    if (this.songsBuffer.length < 2) {
       this.exitSearchMode();
     }
+  }
+
+  clearInput() {
+    this.songsBuffer = {
+      length: 0,
+      items: []
+    };
   }
 
   addSong(song, playlist) {

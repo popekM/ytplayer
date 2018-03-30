@@ -4,34 +4,23 @@ import { ProviderService } from '../provider.service';
 @Component({
   selector: 'app-selectplaylist',
   template: `
-  <h2 (click)="dis()">
-    Playlists:
-  </h2>
-  <ul>
-
-  <mat-form-field>
+  <mat-form-field [style.backgroundColor]="activePlaylist.color">
     <mat-select [value]="activePlaylist.name" (change)="changePlaylist($event)">
-      <mat-option *ngFor="let i of playlists" [value]="i.name">{{i.name}}</mat-option>
+      <mat-option *ngFor="let i of playlists" [value]="i.name" [style.borderColor]="i.color">{{i.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 
   `,
   styles: [`
-    :host() {
-      display: block;
-      margin: 15px;
-      padding: 15px;
-      border: 1px solid rgb(156, 179, 14);
-    }
-    a {
-      border-left: 5px solid red;
-    }
-    span {
-      color: rgba(255, 255, 255, 0.3)
-    }
-    .active {
-      background: rgba(255, 255, 255, 0.1);
-    }
+      mat-option {
+        border-left: 5px solid;
+      }
+      mat-form-field {
+        padding-left: 20px;
+        padding-right: 20px;
+        width: 340px;
+      }
+
   `]
 })
 export class SelectplaylistComponent implements OnInit {
