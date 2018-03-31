@@ -4,13 +4,17 @@ import { ProviderService } from '../provider.service';
 @Component({
   selector: 'app-iframe-video',
   template: `
+    <div class="vinyl" *ngIf="playerSettings.vinyl">
+      <img src="./assets/vinyl.png" alt="vinyl">
+      <img class="thumbnail" [src]="songThumbnailH" alt="thumbnail">
+    </div>
     <div id="player"></div>
     <div class="controls">
 
     <mat-grid-list cols="8" rowHeight="74px">
 
       <mat-grid-tile colspan="1" rowspan="2">
-        <img [src]="songThumbnail" alt="&nbsp;">
+        <img [src]="songThumbnail" alt="thumbnail">
       </mat-grid-tile>
 
       <mat-grid-tile colspan="1" rowspan="2">
@@ -25,15 +29,16 @@ import { ProviderService } from '../provider.service';
       </mat-grid-tile>
 
       <mat-grid-tile colspan="2" rowspan="2">
-        <i class="material-icons small" (click)="toggleRandom()" [class.active]="repeatSettings.randomPlay">shuffle</i>
-        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="repeatSettings.repeatMode!==2" [class.active]="repeatSettings.repeatMode">repeat</i>
-        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="repeatSettings.repeatMode===2" [class.active]="repeatSettings.repeatMode">repeat_one</i>
+        <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
         <span class="spacer">&nbsp;</span>
         <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
         <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
         <mat-slider thumbLabel min="0" max="100" step="1" [(ngModel)]="playerState.volume" (click)="setVolume(playerState.volume)"></mat-slider>
         <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
-
+        <span class="spacer">&nbsp;</span>
+        <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
       </mat-grid-tile>
 
       <mat-grid-tile colspan="4" rowspan="1">
@@ -49,6 +54,33 @@ import { ProviderService } from '../provider.service';
     </div>
   `,
   styles: [`
+.vinyl {
+  position: absolute;
+  background: #000;
+  width: 1520px;
+  height: 700px;
+  top: 64px;
+  left:0;
+}
+.vinyl img:not(.thumbnail){
+  display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    z-index: 1;
+    animation: wave 8s infinite;
+}
+.vinyl .thumbnail{
+  position: absolute;
+  top: 206px;
+  left: 568px;
+  display: block;
+  width: 384px;
+  height: 288px;
+  clip-path: circle(97px at center);
+  z-index: 2;
+  animation: rotate 8s linear infinite;
+}
 
 mat-slider.progressbar{
   width: 95%;
@@ -119,6 +151,25 @@ span.spacer {
 /deep/ .mat-slider-thumb {
   background-color: #fff !important;
 }
+@keyframes wave {
+  0% {
+    transform: rotate(-50deg);
+  }
+  50% {
+    transform: rotate(-20deg);
+  }
+  100% {
+    transform: rotate(-50deg);
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 `]
 })
 export class IframeVideoComponent implements OnInit {
@@ -132,10 +183,12 @@ export class IframeVideoComponent implements OnInit {
   songId;
   songTitle;
   songThumbnail;
+  songThumbnailH;
 
-  repeatSettings = {
+  playerSettings = {
     randomPlay: 0,
-    repeatMode: 1
+    repeatMode: 1,
+    vinyl: 0
   };
   history: string[] = [];
   playerState = {
@@ -162,6 +215,8 @@ export class IframeVideoComponent implements OnInit {
           this.songTitle = this.playlist.tracks[i].title;
           // console.log(this.playlist.tracks[i].thumbnails);
           this.songThumbnail = this.playlist.tracks[i].thumbnails.medium.url;
+          this.songThumbnailH = this.playlist.tracks[i].thumbnails.high.url;
+          console.log(this.playlist);
         }
       }
     });
@@ -180,7 +235,7 @@ export class IframeVideoComponent implements OnInit {
     }
 
     let pR = this.provider;
-    let rS = this.repeatSettings;
+    let rS = this.playerSettings;
     let dR = this.duration;
     let vL = this.playerState;
 
@@ -239,17 +294,20 @@ export class IframeVideoComponent implements OnInit {
   }
 
   toggleRandom() {
-    console.log('tr');
-    this.repeatSettings.randomPlay = this.repeatSettings.randomPlay === 0 ? 1 : 0;
+    this.playerSettings.randomPlay = this.playerSettings.randomPlay === 0 ? 1 : 0;
+  }
+
+  toggleVinyl() {
+    this.playerSettings.vinyl = this.playerSettings.vinyl === 0 ? 1 : 0;
   }
 
   toggleRepeat() {
-    this.repeatSettings.repeatMode = this.repeatSettings.repeatMode === 0 ? 1 : this.repeatSettings.repeatMode === 1 ? 2 : 0;
+    this.playerSettings.repeatMode = this.playerSettings.repeatMode === 0 ? 1 : this.playerSettings.repeatMode === 1 ? 2 : 0;
   }
 
   playNextSong() {
-    console.log('play next', this.repeatSettings.repeatMode);
-    this.provider.playNext(this.repeatSettings.randomPlay, this.repeatSettings.repeatMode);
+    console.log('play next', this.playerSettings.repeatMode);
+    this.provider.playNext(this.playerSettings.randomPlay, this.playerSettings.repeatMode);
   }
 
   playPreviousSong() {

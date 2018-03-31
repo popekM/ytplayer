@@ -155,4 +155,5 @@ export class SelecttrackComponent implements OnInit {
     if(e.buttons){
       this.changeDisplayedSongs(e);
     }
+  }
 }
