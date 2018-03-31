@@ -15,7 +15,7 @@ import { Component, OnInit } from '@angular/core';
     }
     app-displayplaylists {
       display: block;
-      width: 900px;
+      width: 640px;
       background: black;
       float: right;
     }

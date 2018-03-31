@@ -199,10 +199,13 @@ export class ProviderService {
     }
   }
 
-  //adds song to active playlist
+  //adds song to playlist
   addSong(song, playlist) {
     let index = this.data.indexOf(playlist);
     this.data[index].tracks.push(song);
+    if(playlist===this.activePlaylistState){
+      this.activePlaylist.next(this.activePlaylistState);
+    }
   }
 
   getSongsToPlay() {

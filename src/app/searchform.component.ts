@@ -154,7 +154,7 @@ aaa;
   }
 
   searchModeBlur() {
-    if (this.songsBuffer.length < 2) {
+    if (this.songsBuffer.length === 0) {
       this.exitSearchMode();
     }
   }
