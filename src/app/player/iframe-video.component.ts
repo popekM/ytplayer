@@ -68,7 +68,7 @@ import { ProviderService } from '../provider.service';
     margin-right: auto;
     margin-top: 25px;
     z-index: 1;
-    animation: wave 8s infinite;
+    animation: wave 12s infinite;
 }
 .vinyl .thumbnail{
   position: absolute;
@@ -170,6 +170,14 @@ span.spacer {
     transform: rotate(360deg);
   }
 }
+@keyframes hue {
+  0% {
+    filter:hue-rotate(0deg);
+  }
+  100% {
+    filter:hue-rotate(360deg);
+  }
+}
 `]
 })
 export class IframeVideoComponent implements OnInit {
@@ -188,7 +196,8 @@ export class IframeVideoComponent implements OnInit {
   playerSettings = {
     randomPlay: 0,
     repeatMode: 1,
-    vinyl: 0
+    vinyl: 0,
+    playlistMode: true
   };
   history: string[] = [];
   playerState = {
@@ -203,22 +212,30 @@ export class IframeVideoComponent implements OnInit {
 
   ngOnInit() {
     this.provider.getSongsToPlay().subscribe((response) => {
-      this.songId = response;
-      console.log('odebrano w ifrmae', this.songId);
-      this.onYouTubeIframeAPIReady(this.songId);
-      this.history.push(this.songId);
-      if(this.history.length>20){
-        this.history.shift();
-      }
-      for(let i=0; i<this.playlist.tracks.length; i++){
-        if(this.playlist.tracks[i].id === this.songId){
-          this.songTitle = this.playlist.tracks[i].title;
-          // console.log(this.playlist.tracks[i].thumbnails);
-          this.songThumbnail = this.playlist.tracks[i].thumbnails.medium.url;
-          this.songThumbnailH = this.playlist.tracks[i].thumbnails.high.url;
-          console.log(this.playlist);
+      if(typeof response === 'string'){
+        this.songId = response;
+        this.history.push(this.songId);
+        if(this.history.length>20){
+          this.history.shift();
         }
+        for(let i=0; i<this.playlist.tracks.length; i++){
+          if(this.playlist.tracks[i].id === this.songId){
+            this.songTitle = this.playlist.tracks[i].title;
+            this.songThumbnail = this.playlist.tracks[i].thumbnails.medium.url;
+            this.songThumbnailH = this.playlist.tracks[i].thumbnails.high.url;
+          }
+        }
+        this.playerSettings.playlistMode = true;
+      }else{
+        let res: any = response;
+        this.songId = res.id;
+        this.songTitle = res.title;
+        this.songThumbnail = res.thumbnails.medium.url;
+        this.songThumbnailH = res.thumbnails.high.url;
+        this.playerSettings.playlistMode = false;
       }
+      this.onYouTubeIframeAPIReady(this.songId);
+
     });
 
     this.provider.getActivePlaylist().subscribe((response)=>{
@@ -256,10 +273,10 @@ export class IframeVideoComponent implements OnInit {
     function stateChange(event) {
       let state = event.target.getPlayerState();
       if (state === 0) {
-        pR.playNext(rS.randomPlay, rS.repeatMode);
+        if(rS.playlistMode){
+          pR.playNext(rS.randomPlay, rS.repeatMode);
+        }
       }
-      console.log('state change', event.target.getPlayerState(), event);
-
     }
 
     this.webPlayer = new this.YTplayer.Player('player', {
@@ -319,9 +336,7 @@ export class IframeVideoComponent implements OnInit {
   }
 
   changePlayState(inPlay: boolean) {
-    console.log('change state', inPlay);
     this.playerState.inPlay = inPlay;
-    console.log(this.playerState);
   }
 
   setVolume(volume:number){

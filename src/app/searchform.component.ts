@@ -8,12 +8,12 @@ import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-searchform',
   template: `
-  <div class="overlay" *ngIf="overlay"><span (click)="exitSearchMode()">x</span></div>
+  <div class="overlay" *ngIf="overlay"><i (click)="exitSearchMode()" class="material-icons">clear</i></div>
   <form [formGroup]="searchForm">
     <mat-form-field class="form-field">
      <input matInput formControlName="query" type="text" class="form-control" #forClear placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
      <button mat-button *ngIf="forClear.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="forClear.value=''; clearInput()">
-    x
+     <i class="material-icons">clear</i>
       </button>
     </mat-form-field>
 
@@ -28,8 +28,8 @@ import { ChangeDetectorRef } from '@angular/core';
    <img mat-card-image src="{{ i.thumbnails.medium.url }}" alt="Music video photo">
 
    <mat-card-actions>
-     <button mat-button>Play</button>
-     <button mat-button [matMenuTriggerFor]="menu">Add to Playlist</button>
+     <button mat-button (click)="playSong(i)"><i class="material-icons">play_arrow</i></button>
+     <button mat-button class="right" [matMenuTriggerFor]="menu"><i class="material-icons">playlist_add</i></button>
       <mat-menu #menu="matMenu" [class]="hid">
         <button *ngFor="let b of playlists" mat-menu-item (click)="addSong(i, b)" [style.borderColor]="b.color">{{ b.name }}</button>
       </mat-menu>
@@ -57,6 +57,12 @@ import { ChangeDetectorRef } from '@angular/core';
       line-height: 20px;
       overflow: hidden;
     }
+    .mat-card i {
+      font-size: 40px;
+    }
+    .right {
+      float: right;
+    }
     form {
       height: 64px;
       min-width: 350px;
@@ -77,12 +83,15 @@ import { ChangeDetectorRef } from '@angular/core';
       background: rgba(0, 0, 0, 0.8);
       z-index: 1;
     }
-    .overlay span {
+    .overlay i {
       position: absolute;
       display: block;
       top: 20px;
       right: 40px;
       font-size: 60px;
+    }
+    .spacer {
+      flex: 1 1 auto;
     }
     .card-overlay {
       position: absolute;
@@ -169,6 +178,12 @@ aaa;
   addSong(song, playlist) {
     this.provider.addSong(song, playlist);
     document.getElementsByClassName('mat-menu-panel')[0].innerHTML = '';
+  }
+
+  playSong(id){
+       this.provider.playSong(id);
+       this.exitSearchMode();
+       this.ref.detectChanges();
   }
 
 }
