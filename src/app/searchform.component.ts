@@ -8,7 +8,12 @@ import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-searchform',
   template: `
-  <div class="overlay" *ngIf="overlay"><i (click)="exitSearchMode()" class="material-icons">clear</i></div>
+  <div class="overlay" *ngIf="overlay">
+    <i (click)="exitSearchMode()" class="material-icons">clear</i>
+    <i class="bottom" *ngIf="songsBuffer.prev" (click)="searchPrev()" class="material-icons">keyboard_arrow_left</i>
+    <i class="bottom" *ngIf="songsBuffer.next" (click)="searchNext()" class="material-icons">keyboard_arrow_right</i>
+  </div>
+
   <form [formGroup]="searchForm">
     <mat-form-field class="form-field">
      <input matInput formControlName="query" type="text" class="form-control" #forClear placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
@@ -90,6 +95,16 @@ import { ChangeDetectorRef } from '@angular/core';
       right: 40px;
       font-size: 60px;
     }
+
+    .overlay i + i {
+        top: initial;
+        bottom: 40px;
+        right: initial;
+        left: 52%;
+      }
+      .overlay i:first-child + i {
+        left: 48%;
+      }
     .spacer {
       flex: 1 1 auto;
     }
@@ -107,11 +122,13 @@ import { ChangeDetectorRef } from '@angular/core';
   `]
 })
 export class SearchformComponent implements OnInit {
-aaa;
+
   searchForm: FormGroup;
   songsBuffer: any = {
     length: 0,
-    items: []
+    items: [],
+    prev: '',
+    next: ''
   };
   initalized: boolean = false;
   overlay: boolean = false;
@@ -133,15 +150,25 @@ aaa;
       .debounceTime(500)
       .subscribe(value => {
         if (value.length > 2) {
-          this.provider.execQ(value);
+          this.provider.execQ(value, 14, '');
           console.log('search execution, query: ', value);
         } else {
           this.songsBuffer = {
             length: 0,
-            items: []
+            items: [],
+            prev: '',
+            next: ''
           };
         }
       });
+  }
+
+  searchNext(){
+    this.provider.execQ(this.searchForm.get('query').value, 14, this.songsBuffer.next);
+  }
+
+  searchPrev(){
+    this.provider.execQ(this.searchForm.get('query').value, 14, this.songsBuffer.prev);
   }
 
   searchMode() {
