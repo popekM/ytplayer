@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ProviderService } from '../provider.service';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-iframe-video',
   template: `
-    <div class="vinyl" *ngIf="playerSettings.vinyl">
-      <img src="./assets/vinyl.png" alt="vinyl">
-      <img class="thumbnail" [src]="songThumbnailH" alt="thumbnail">
+
+    <div id="player-container" [class.fullscreen]="playerSettings.fullscreen" (click)="playerSettings.fullscreen? toggleFullscreen():''">
+      <div class="vinylt" *ngIf="!playerSettings.vinyl" [class.fullscreen]="playerSettings.fullscreen"></div>
+      <div class="vinyl" *ngIf="playerSettings.vinyl"><img src="./assets/vinyl.png" alt="vinyl"><img class="thumbnail" [src]="songThumbnailH" alt="thumbnail">
+      </div>
+
+      <div id="player"></div>
+
     </div>
-    <div id="player"></div>
-    <div class="controls">
+    <div class="controls" *ngIf="!playerSettings.fullscreen">
 
     <mat-grid-list cols="8" rowHeight="74px">
 
@@ -39,6 +44,7 @@ import { ProviderService } from '../provider.service';
         <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
         <span class="spacer">&nbsp;</span>
         <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
+        <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
       </mat-grid-tile>
 
       <mat-grid-tile colspan="4" rowspan="1">
@@ -55,39 +61,55 @@ import { ProviderService } from '../provider.service';
   `,
   styles: [`
 .vinyl {
+  background: rgba(13, 61, 61, 0.7);
+  width: 100%;
+  height: 100%;
+}
+.vinylt {
   position: absolute;
-  background: #000;
+  background: rgba(13, 61, 61, 0.5);
   width: 1520px;
   height: 700px;
   top: 64px;
-  left:0;
 }
-.vinyl img:not(.thumbnail){
-  display: block;
+.vinyl img{
+    position: relative;
+    display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 25px;
+    top: 25px;
     z-index: 1;
     animation: wave 12s infinite;
 }
+.fullscreen .vinyl img{
+  top: 125px;
+}
 .vinyl .thumbnail{
-  position: absolute;
-  top: 206px;
-  left: 568px;
-  display: block;
+  top: -444px;
   width: 384px;
   height: 288px;
   clip-path: circle(97px at center);
   z-index: 2;
   animation: rotate 8s linear infinite;
 }
-
-mat-slider.progressbar{
-  width: 95%;
+.fullscreen .vinyl .thumbnail{
+  top: -344px;
 }
-#player{
+#player-container {
   width: 1520px;
   height: 700px;
+  overflow:hidden;
+}
+.fullscreen {
+  position: absolute;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+mat-slider.progressbar{
+  width: 95%;
 }
 .controls {
   position: relative;
@@ -184,7 +206,7 @@ export class IframeVideoComponent implements OnInit {
 
   playlist;
 
-  constructor(private provider: ProviderService) { }
+  constructor(private provider: ProviderService, public snackBar: MatSnackBar) { }
 
   YTplayer = (<any>window).YT || {};
   webPlayer;
@@ -197,7 +219,8 @@ export class IframeVideoComponent implements OnInit {
     randomPlay: 0,
     repeatMode: 1,
     vinyl: 0,
-    playlistMode: true
+    playlistMode: true,
+    fullscreen: 0
   };
   history: string[] = [];
   playerState = {
@@ -284,7 +307,12 @@ export class IframeVideoComponent implements OnInit {
       width: '1520',
       videoId: id,
       playerVars: {
-        controls: 0
+        controls: 0,
+        disablekb: 1,
+        iv_load_policy: 3,
+        modestbranding: 1,
+        showinfo: 0,
+        rel: 0
       },
       events: {
         'onReady': onPlayerReady,
@@ -316,6 +344,47 @@ export class IframeVideoComponent implements OnInit {
 
   toggleVinyl() {
     this.playerSettings.vinyl = this.playerSettings.vinyl === 0 ? 1 : 0;
+  }
+
+  toggleFullscreen() {
+    this.playerSettings.fullscreen = this.playerSettings.fullscreen === 0 ? 1 : 0;
+    let temp = this.playerSettings;
+    let player = this.webPlayer;
+    if(this.playerSettings.fullscreen){
+
+        let sb = this.snackBar;
+        sb.open('To exit fullscreen mode press \'ESC\'', 'OK', {
+          duration: 2500
+        });
+        setTimeout(function() {
+          sb.open('To toggle browser fullscreen mode press \'F11\'', 'OK', {
+            duration: 2500
+          });
+        }, 3000);
+
+
+      document.addEventListener('keydown', function temp2(e) {
+        let evt:any = e || window.event;
+        let isEscape = false;
+        if ("key" in evt) {
+          isEscape = (evt.key == "Escape" || evt.key == "Esc");
+        } else {
+          isEscape = (evt.keyCode == 27);
+        }
+        if (isEscape) {
+          document.removeEventListener('keydown', temp2);
+          temp.fullscreen = 0;
+          player.setSize(1520, 700);
+        }
+      });
+      if(this.playerSettings.vinyl){
+         this.webPlayer.setSize(1, 0);
+      }else{
+        this.webPlayer.setSize(window.innerWidth, window.innerHeight);
+      }
+    }else{
+         this.webPlayer.setSize(1520, 700);
+    }
   }
 
   toggleRepeat() {

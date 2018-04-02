@@ -15,7 +15,8 @@ import {
   MatSelectModule,
   MatSliderModule,
   MatDialogModule,
-  MatGridListModule
+  MatGridListModule,
+  MatSnackBarModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -65,7 +66,8 @@ import { ConfirmationDialogComponent } from './playlists/confirmation-dialog.com
     MatSelectModule,
     MatSliderModule,
     MatDialogModule,
-    MatGridListModule
+    MatGridListModule,
+    MatSnackBarModule
   ],
   providers: [ProviderService],
   bootstrap: [AppComponent]
