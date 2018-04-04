@@ -8,7 +8,9 @@ import {MatSnackBar} from '@angular/material';
 
     <div id="player-container" [class.fullscreen]="playerSettings.fullscreen" (click)="playerSettings.fullscreen? toggleFullscreen():''">
       <div class="vinylt" *ngIf="!playerSettings.vinyl" [class.fullscreen]="playerSettings.fullscreen"></div>
-      <div class="vinyl" *ngIf="playerSettings.vinyl"><img src="./assets/vinyl.png" alt="vinyl"><img class="thumbnail" [src]="songThumbnailH" alt="thumbnail">
+      <div class="vinyl" *ngIf="playerSettings.vinyl">
+        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" src="./assets/vinyl.png" alt="vinyl">
+        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" class="thumbnail" [src]="songThumbnailH" alt="thumbnail">
       </div>
 
       <div id="player"></div>
@@ -60,11 +62,17 @@ import {MatSnackBar} from '@angular/material';
     </div>
   `,
   styles: [`
+
 .vinyl {
-  background: rgba(13, 61, 61, 0.7);
+  background-image: url('../assets/discbg.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100%;
+  background-color: #000;
   width: 100%;
   height: 100%;
 }
+
 .vinylt {
   position: absolute;
   background: rgba(13, 61, 61, 0.5);
@@ -106,7 +114,7 @@ import {MatSnackBar} from '@angular/material';
   height: 100% !important;
   top: 0;
   left: 0;
-  z-index: 5;
+  z-index: 4;
 }
 mat-slider.progressbar{
   width: 95%;
@@ -187,26 +195,21 @@ span.spacer {
 @keyframes rotate {
   0% {
     transform: rotate(0);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-@keyframes hue {
-  0% {
     filter:hue-rotate(0deg);
   }
   100% {
-    filter:hue-rotate(360deg);
+    transform: rotate(360deg);
+    filter:hue-rotate(0deg);
   }
 }
+
 `]
 })
 export class IframeVideoComponent implements OnInit {
 
   playlist;
 
-  constructor(private provider: ProviderService, public snackBar: MatSnackBar) { }
+  constructor(private provider: ProviderService, public snackBar: MatSnackBar) {}
 
   YTplayer = (<any>window).YT || {};
   webPlayer;
@@ -234,6 +237,7 @@ export class IframeVideoComponent implements OnInit {
   };
 
   ngOnInit() {
+    console.log('init', this.webPlayer);
     this.provider.getSongsToPlay().subscribe((response) => {
       if(typeof response === 'string'){
         this.songId = response;
@@ -258,19 +262,24 @@ export class IframeVideoComponent implements OnInit {
         this.playerSettings.playlistMode = false;
       }
       this.onYouTubeIframeAPIReady(this.songId);
-
     });
 
     this.provider.getActivePlaylist().subscribe((response)=>{
       this.playlist = response;
     });
+
+
+
+
+  }
+  ngOnDestroy(){
   }
 
   onYouTubeIframeAPIReady(id) {
 
     if (this.webPlayer) {
       this.changePlayState(false);
-      this.webPlayer.stopVideo();
+      this.webPlayer.pauseVideo();
       this.webPlayer.destroy();
     }
 
@@ -278,29 +287,7 @@ export class IframeVideoComponent implements OnInit {
     let rS = this.playerSettings;
     let dR = this.duration;
     let vL = this.playerState;
-
-    function onPlayerReady(event) {
-      event.target.setVolume(vL.volume);
-      dR.value = event.target.getDuration();
-      if(dR.interval){
-        clearInterval(dR.interval);
-      }
-      dR.interval = setInterval(function() {
-        dR.current = event.target.getCurrentTime();
-      }, 1000);
-
-      event.target.playVideo();
-      vL.inPlay = true;
-    }
-
-    function stateChange(event) {
-      let state = event.target.getPlayerState();
-      if (state === 0) {
-        if(rS.playlistMode){
-          pR.playNext(rS.randomPlay, rS.repeatMode);
-        }
-      }
-    }
+    let checkPlay: any = -1;
 
     this.webPlayer = new this.YTplayer.Player('player', {
       height: '700',
@@ -319,17 +306,48 @@ export class IframeVideoComponent implements OnInit {
         'onStateChange': stateChange
       }
     });
+
+    function onPlayerReady(event) {
+      event.target.setVolume(vL.volume);
+      dR.value = event.target.getDuration();
+      if(dR.interval){
+        clearInterval(dR.interval);
+      }
+      dR.interval = setInterval(function() {
+        dR.current = event.target.getCurrentTime();
+      }, 1000);
+      event.target.playVideo();
+      vL.inPlay = true;
+    }
+
+    function stateChange(event) {
+      let state = event.target.getPlayerState();
+      console.log('state: ', state);
+      if (state === 0) {
+        if(rS.playlistMode){
+          pR.playNext(rS.randomPlay, rS.repeatMode);
+        }
+      } else if (state === -1){
+        let temp = 0;
+        checkPlay = setTimeout(function() {
+          if((event.target.getPlayerState() == -1 || event.target.getPlayerState() == 3) && temp == 0){
+            console.log('pause start');
+            event.target.pauseVideo();
+            event.target.playVideo();
+            temp = 1;
+          }
+        }, 2000);
+      }
+    }
   }
 
   playVideo() {
     this.webPlayer.playVideo();
-    console.log('change state true');
     this.changePlayState(true);
   }
 
   pauseVideo() {
     this.webPlayer.pauseVideo();
-    console.log('pause');
     this.changePlayState(false);
   }
 

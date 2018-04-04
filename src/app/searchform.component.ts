@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ProviderService } from './provider.service';
 import "rxjs/add/operator/distinctUntilChanged";
@@ -77,7 +77,7 @@ import { ChangeDetectorRef } from '@angular/core';
     }
     .form-field {
       width: 100%;
-      z-index: 2;
+      z-index: 4;
     }
     .overlay {
       position: absolute;
@@ -86,7 +86,7 @@ import { ChangeDetectorRef } from '@angular/core';
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.8);
-      z-index: 1;
+      z-index: 3;
     }
     .overlay i {
       position: absolute;
@@ -114,7 +114,7 @@ import { ChangeDetectorRef } from '@angular/core';
       left: 0;
       width: 100%;
       min-height: 200px;
-      z-index: 2;
+      z-index: 3;
     }
     .mat-menu-item{
       border-left: 5px solid;
@@ -122,6 +122,9 @@ import { ChangeDetectorRef } from '@angular/core';
   `]
 })
 export class SearchformComponent implements OnInit {
+
+  @Output('play')
+  emitter = new EventEmitter();
 
   searchForm: FormGroup;
   songsBuffer: any = {
@@ -211,6 +214,7 @@ export class SearchformComponent implements OnInit {
        this.provider.playSong(id);
        this.exitSearchMode();
        this.ref.detectChanges();
+       this.emitter.emit();
   }
 
 }

@@ -2,13 +2,14 @@
   <img src="../assets/logo.png" alt="logo"><span class="header">YouTube Music Player</span>
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
-<app-searchform></app-searchform>
+<app-searchform (play)="condChangeView()"></app-searchform>
 
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
 
-  <button mat-button routerLink="/">Player</button>
-  <button mat-button routerLink="playlists">Manage Playlists</button>
+  <button mat-button (click)="changeView(0)" [class.active]="display==0">Player</button>
+  <button mat-button (click)="changeView(1)" [class.active]="display==1">Manage Playlists</button>
 </mat-toolbar>
 
-<router-outlet></router-outlet>
+<app-player [hidden]="display!=0"></app-player>
+<app-playlists *ngIf="display==1"></app-playlists>

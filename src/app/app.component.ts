@@ -8,8 +8,16 @@ import { ProviderService } from './provider.service';
 })
 export class AppComponent {
 
-  title = 'player';
+  display: number = 0;
 
   constructor(private provider: ProviderService){}
 
+  changeView(view){
+    this.display = view;
+  }
+  condChangeView(){
+    if(this.display!=0){
+      this.display=0;
+    }
+  }
 }
