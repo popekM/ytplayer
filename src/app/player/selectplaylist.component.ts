@@ -26,8 +26,8 @@ import { ProviderService } from '../provider.service';
 })
 export class SelectplaylistComponent implements OnInit {
 
-  playlists: any[];
-  activePlaylist: any;
+  playlists: any[] = [];
+  activePlaylist: any = '';
 
   constructor(private provider: ProviderService) { }
 
@@ -42,5 +42,9 @@ export class SelectplaylistComponent implements OnInit {
     let f = this.playlists.find(playlists => playlists.name === pl.value);
     this.provider.changeActivePlaylist(f);
   }
-
+  cl(){
+    console.log('cl');
+    this.playlists = this.provider.getPlaylists();
+    console.log(this.playlists);
+  }
 }
