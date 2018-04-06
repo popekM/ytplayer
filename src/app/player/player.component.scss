@@ -1,7 +1,5 @@
 app-iframe-video {
   display: block;
-  width: 1520px;
-  height: 850px;
   background: #000;
   margin: 0;
   float: left;
@@ -13,12 +11,34 @@ app-selectplaylist{
   height: 75px;
   margin: 0;
   float: left;
+  overflow: visible;
 }
 
 app-selecttrack{
   display: block;
   width: 380px;
-  height: 775px;
   margin: 0;
   float: left;
+}
+.playlist{
+  position: absolute;
+  right: 0;
+  width: 320px;
+  z-index: 2;
+  overflow: hidden;
+}
+.hide {
+  display: block;
+  position: absolute;
+  right: 300px;
+  z-index: 3;
+}
+/deep/ .mat-button {
+  min-width: 40px !important;
+}
+.mat-mini-fab.left{
+  text-align: left;
+}
+.mat-mini-fab.right{
+    text-align: right;
 }

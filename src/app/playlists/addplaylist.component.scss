@@ -4,12 +4,16 @@ button {
 i{
   font-size: 30px;
 }
+form {
+  display: block;
+}
 .form-field {
   width: 200px;
   margin: 20px;
 }
 .bottom{
-  margin-top: 110px;
+  display: block;
+  margin-top: 0px;
 }
 .mat-raised-button {
   min-width: 30px;

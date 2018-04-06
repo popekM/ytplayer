@@ -1,15 +1,16 @@
-<mat-toolbar color="basic">
-  <img src="../assets/logo.png" alt="logo"><span class="header">YouTube Music Player</span>
-  <!-- This fills the remaining space of the current row -->
+<mat-toolbar>
+  <img src="../assets/logo.png" alt="logo">
+  <span class="header">YouTube Music Player</span>
   <span class="fill-remaining-space"></span>
-<app-searchform (play)="condChangeView()"></app-searchform>
-
-  <!-- This fills the remaining space of the current row -->
+  <app-searchform (play)="condChangeView()"></app-searchform>
   <span class="fill-remaining-space"></span>
+  <button class="menuW" mat-button (click)="changeView(0)" [class.active]="display==0">Player</button>
+  <button class="menuW" mat-button (click)="changeView(1)" [class.active]="display==1">Manage Playlists</button>
 
-  <button mat-button (click)="changeView(0)" [class.active]="display==0">Player</button>
-  <button mat-button (click)="changeView(1)" [class.active]="display==1">Manage Playlists</button>
+  <button *ngIf="display==0" class="menuN" mat-button (click)="changeView(1)"><i class="material-icons">library_music</i></button>
+  <button *ngIf="display==1" class="menuN" mat-button (click)="changeView(0)"><i class="material-icons">playlist_play</i></button>
+
 </mat-toolbar>
 
-<app-player [hidden]="display!=0"></app-player>
-<app-playlists *ngIf="display==1"></app-playlists>
+<app-player [class.hidden]="display!=0" [style.width.px]="width" [style.height.px]="height-top"></app-player>
+<app-playlists *ngIf="display==1" [style.height.px]="height-top"></app-playlists>

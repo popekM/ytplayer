@@ -1,6 +1,11 @@
+app-player{
+  display: block;
+  overflow: hidden;
+}
+.hidden {
+  display: none;
+}
 .fill-remaining-space {
-  /* This fills the remaining space, by using flexbox.
-     Every toolbar row uses a flexbox row layout. */
   flex: 1 1 auto;
 }
 span.header {
@@ -8,4 +13,19 @@ span.header {
 }
 .active {
   color: #b10d4e;
+}
+.menuN {
+  display: none;
+}
+
+@media only screen and (max-width: 900px) {
+  span.header {
+    display: none;
+  }
+  .menuN {
+    display: block;
+  }
+  .menuW {
+    display: none;
+  }
 }

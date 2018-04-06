@@ -13,11 +13,21 @@ export class AppComponent {
   }
 
   display: number = 0;
-
+  top = 0;
+  height = 0;
+  width = 0;
   constructor(private provider: ProviderService){}
 
   ngOnInit() {
     this.provider.localStorageGetData();
+    this.height = window.innerHeight;
+    this.width = window.innerWidth;
+
+    if(window.innerWidth>599){
+      this.top = 64;
+    }else{
+      this.top = 56;
+    }
   }
   changeView(view){
     this.display = view;

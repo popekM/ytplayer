@@ -10,13 +10,19 @@ import { ChangeDetectorRef } from '@angular/core';
   template: `
   <div class="overlay" *ngIf="overlay">
     <i (click)="exitSearchMode()" class="material-icons">clear</i>
-    <i class="bottom" *ngIf="songsBuffer.prev" (click)="searchPrev()" class="material-icons">keyboard_arrow_left</i>
-    <i class="bottom" *ngIf="songsBuffer.next" (click)="searchNext()" class="material-icons">keyboard_arrow_right</i>
   </div>
 
   <form [formGroup]="searchForm">
     <mat-form-field class="form-field">
      <input matInput formControlName="query" type="text" class="form-control" #forClear placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
+
+     <button mat-button *ngIf="forClear.value!='' && songsBuffer.prev!=''" matSuffix (click)="searchPrev()" mat-icon-button>
+       <i class="material-icons">keyboard_arrow_left</i>
+     </button>
+     <button mat-button *ngIf="forClear.value!='' && songsBuffer.next!=''" (click)="searchNext()" matSuffix mat-icon-button>
+       <i class="material-icons">keyboard_arrow_right</i>
+     </button>
+
      <button mat-button *ngIf="forClear.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="forClear.value=''; clearInput()">
      <i class="material-icons">clear</i>
       </button>
@@ -77,7 +83,7 @@ import { ChangeDetectorRef } from '@angular/core';
     }
     .form-field {
       width: 100%;
-      z-index: 4;
+      z-index: 5;
     }
     .overlay {
       position: absolute;
@@ -86,7 +92,7 @@ import { ChangeDetectorRef } from '@angular/core';
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.8);
-      z-index: 3;
+      z-index: 4;
     }
     .overlay i {
       position: absolute;
@@ -97,14 +103,14 @@ import { ChangeDetectorRef } from '@angular/core';
     }
 
     .overlay i + i {
-        top: initial;
-        bottom: 40px;
+        top: 60px;
         right: initial;
-        left: 52%;
+        left: 60%;
       }
       .overlay i:first-child + i {
-        left: 48%;
+        left: 40%;
       }
+
     .spacer {
       flex: 1 1 auto;
     }
@@ -113,12 +119,52 @@ import { ChangeDetectorRef } from '@angular/core';
       top: 100px;
       left: 0;
       width: 100%;
-      min-height: 200px;
-      z-index: 3;
+      z-index: 4;
     }
     .mat-menu-item{
       border-left: 5px solid;
     }
+
+@media only screen and (max-width: 900px) {
+    form {
+      min-width: 100px;
+      max-width: 200px;
+      overflow: hidden;
+    }
+    .overlay i {
+      top: 10px;
+      right: 20px;
+      font-size: 40px;
+    }
+  }
+  @media only screen and (max-width: 500px) {
+    .overlay i {
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+    }
+    .mat-card {
+      max-width: 110px;
+    }
+    .mat-button {
+      padding: 0;
+    }
+.card-overlay {
+  top: initial;
+}
+.mat-card{
+  padding: 10px 16px;
+}
+.mat-card-image{
+  margin: 6px -16px;
+}
+.mat-card-actions{
+  padding: 0;
+}
+.mat-card-header {
+  height: 40px;
+}
+  }
   `]
 })
 export class SearchformComponent implements OnInit {

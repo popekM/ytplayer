@@ -43,12 +43,12 @@ import { ProviderService } from '../provider.service';
       overflow: hidden;
     }
     .material-icons {
-  padding: 0 6px;
-}
+      padding: 0 6px;
+    }
 
-.spacer {
-  flex: 1 1 auto;
-}
+  .spacer {
+    flex: 1 1 auto;
+  }
 
     .dark{
       color: #373737;
@@ -56,6 +56,12 @@ import { ProviderService } from '../provider.service';
     }
     mat-toolbar-row{
       background: #000;
+    }
+    @media only screen and (max-width: 550px) {
+      .material-icons {
+        font-size: 18px;
+        padding: 0 2px;
+      }
     }
   `]
 })

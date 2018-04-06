@@ -1,4 +1,9 @@
 
-<app-iframe-video></app-iframe-video>
-<app-selectplaylist></app-selectplaylist>
-<app-selecttrack></app-selecttrack>
+<app-iframe-video [style.width.px]="windowSize.width>700 ? windowSize.width-380 : windowSize.width" [style.height.px]="windowSize.height-windowSize.top"></app-iframe-video>
+<app-selectplaylist *ngIf="windowSize.width>700"></app-selectplaylist>
+<app-selecttrack *ngIf="windowSize.width>700" [style.height.px]="windowSize.height-windowSize.top-75"></app-selecttrack>
+<div class="hide" [style.top.px]="windowSize.top + 15" [style.right.px]="displayTracks?300:-20" *ngIf="windowSize.width<=700"><button mat-mini-fab [class.right]="windowSize.width<330 && displayTracks" [class.left]="!displayTracks" color="primary" (click)="toggleTrackList()"><i *ngIf="displayTracks" class="material-icons">chevron_right</i><i *ngIf="!displayTracks" class="material-icons">chevron_left</i></button></div>
+<div class="playlist" [hidden]="!(windowSize.width<=700 && displayTracks)" [style.height.px]="windowSize.height - windowSize.top - windowSize.bottom" [style.top]="windowSize.top">
+  <app-selectplaylist [style.width.px]="320"></app-selectplaylist>
+  <app-selecttrack></app-selecttrack>
+</div>

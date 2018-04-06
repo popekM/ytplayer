@@ -1,57 +1,120 @@
 import { Component, OnInit } from '@angular/core';
 import { ProviderService } from '../provider.service';
-import {MatSnackBar} from '@angular/material';
-
+import { MatSnackBar } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-iframe-video',
   template: `
 
-    <div id="player-container" [class.fullscreen]="playerSettings.fullscreen" (click)="playerSettings.fullscreen? toggleFullscreen():''">
-      <div class="vinylt" *ngIf="!playerSettings.vinyl" [class.fullscreen]="playerSettings.fullscreen"></div>
+    <div id="player-container"
+      [class.fullscreen]="playerSettings.fullscreen"
+      (click)="playerSettings.fullscreen? toggleFullscreen():''"
+      [style.width.px]="windowSize.elWidth"
+      [style.height.px]="windowSize.height - windowSize.top - 150">
+      <div class="vinylt"
+        *ngIf="!playerSettings.vinyl"
+        [class.fullscreen]="playerSettings.fullscreen"
+        [style.width.px]="windowSize.elWidth"
+        [style.height.px]="windowSize.height - windowSize.top - 150"
+        [style.top.px]="windowSize.top">
+      </div>
       <div class="vinyl" *ngIf="playerSettings.vinyl">
-        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" src="./assets/vinyl.png" alt="vinyl">
-        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" class="thumbnail" [src]="songThumbnailH" alt="thumbnail">
+        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" src="./assets/vinyl.png"
+          [style.top.px]="windowSize.vinylTop"
+          [style.width.px]="windowSize.vinylWH"
+          [style.height.px]="windowSize.vinylWH"
+          alt="vinyl">
+        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'"
+          class="thumbnail"
+          [src]="songThumbnailH"
+          [style.width.px]="windowSize.thumbWidth"
+          [style.height.px]="windowSize.thumbHeight"
+          [style.top.px]="windowSize.thumbTop"
+          [style.left.px]="windowSize.thumbLeft"
+          [style.clipPath]="windowSize.thumbClip"
+          alt="thumbnail">
       </div>
 
       <div id="player"></div>
 
     </div>
-    <div class="controls" *ngIf="!playerSettings.fullscreen">
+    <div class="controls"
+      *ngIf="!playerSettings.fullscreen"
+      [style.width.px]="windowSize.elWidth">
 
-    <mat-grid-list cols="8" rowHeight="74px">
+    <mat-grid-list [cols]="windowSize.cols" [rowHeight]="windowSize.colsH">
 
-      <mat-grid-tile colspan="1" rowspan="2">
+      <mat-grid-tile colspan="1" rowspan="2" *ngIf="windowSize.width>1100 || (windowSize.width<=700 && windowSize.width>530)">
         <img [src]="songThumbnail" alt="thumbnail">
       </mat-grid-tile>
 
-      <mat-grid-tile colspan="1" rowspan="2">
-        {{songTitle}}
+      <mat-grid-tile
+        [class.left]="windowSize.width<=530"
+        [colspan]="windowSize.width>530?1:6"
+        [rowspan]="windowSize.width>530?2:1"
+        *ngIf="windowSize.width>840 || windowSize.width<=700">
+
+          {{songTitle}}
       </mat-grid-tile>
 
-      <mat-grid-tile colspan="4" rowspan="1">
+      <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=530">
+      <button mat-icon-button color="primary" (click)="toggleSettings()">
+        <i class="material-icons settings" [class.active]="windowSize.dispSettings">settings</i>
+      </button>
+      </mat-grid-tile>
+
+      <mat-grid-tile [colspan]="windowSize.colsC" [rowspan]="windowSize.width>530?1:2">
         <i class="material-icons" (click)="playPreviousSong()" [class.dark]="history.length==0">skip_previous</i>
         <i class="material-icons big" (click)="playVideo()" *ngIf="!playerState.inPlay">play_arrow</i>
         <i class="material-icons big" (click)="pauseVideo()" *ngIf="playerState.inPlay">pause</i>
         <i class="material-icons" (click)="playNextSong()">skip_next</i>
       </mat-grid-tile>
 
-      <mat-grid-tile colspan="2" rowspan="2">
-        <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
-        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
-        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
-        <span class="spacer">&nbsp;</span>
-        <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
-        <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
-        <mat-slider thumbLabel min="0" max="100" step="1" [(ngModel)]="playerState.volume" (click)="setVolume(playerState.volume)"></mat-slider>
-        <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
-        <span class="spacer">&nbsp;</span>
-        <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
-        <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
+      <mat-grid-tile class="controlsW" [colspan]="windowSize.width>530?2:8" rowspan="2" *ngIf="windowSize.width>1550 || (windowSize.width<=530 && windowSize.dispSettings)">
+
+          <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
+          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
+          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
+          <span class="spacer">&nbsp;</span>
+          <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
+          <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
+          <mat-slider thumbLabel min="0" max="100" step="1" [(ngModel)]="playerState.volume" (click)="setVolume(playerState.volume)"></mat-slider>
+          <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
+          <span class="spacer">&nbsp;</span>
+
+          <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
+          <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
+
       </mat-grid-tile>
 
-      <mat-grid-tile colspan="4" rowspan="1">
+      <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=1550 && windowSize.width>530">
+
+          <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
+          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
+          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
+          <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
+          <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
+
+      </mat-grid-tile>
+
+
+
+      <mat-grid-tile *ngIf="!windowSize.dispSettings" [colspan]="windowSize.colsC" [rowspan]="windowSize.width>530?1:2">
         <mat-slider class="progressbar" min="0" max="{{duration.value}}" step="1" [(ngModel)]="duration.current" (click)="rewindVideo(duration.current)"></mat-slider>
       </mat-grid-tile>
+
+
+      <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=1550 && windowSize.width>530">
+
+          <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
+          <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
+          <mat-slider thumbLabel min="0" max="100" step="1" [(ngModel)]="playerState.volume" (click)="setVolume(playerState.volume)"></mat-slider>
+          <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
+
+      </mat-grid-tile>
+
+
+
     </mat-grid-list>
 
 
@@ -67,7 +130,7 @@ import {MatSnackBar} from '@angular/material';
   background-image: url('../assets/discbg.jpg');
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 100%;
+  background-size: cover;
   background-color: #000;
   width: 100%;
   height: 100%;
@@ -75,37 +138,21 @@ import {MatSnackBar} from '@angular/material';
 
 .vinylt {
   position: absolute;
-  background: rgba(13, 61, 61, 0.5);
-  width: 1520px;
-  height: 700px;
-  top: 64px;
 }
 .vinyl img{
     position: relative;
     display: block;
     margin-left: auto;
     margin-right: auto;
-    top: 25px;
     z-index: 1;
     animation: wave 12s infinite;
 }
-.fullscreen .vinyl img{
-  top: 125px;
-}
 .vinyl .thumbnail{
-  top: -444px;
-  width: 384px;
-  height: 288px;
-  clip-path: circle(97px at center);
+  position: absolute;
   z-index: 2;
   animation: rotate 8s linear infinite;
 }
-.fullscreen .vinyl .thumbnail{
-  top: -344px;
-}
 #player-container {
-  width: 1520px;
-  height: 700px;
   overflow:hidden;
 }
 .fullscreen {
@@ -114,14 +161,13 @@ import {MatSnackBar} from '@angular/material';
   height: 100% !important;
   top: 0;
   left: 0;
-  z-index: 4;
+  z-index: 5;
 }
 mat-slider.progressbar{
   width: 95%;
 }
 .controls {
   position: relative;
-  width: 1520px;
   height: 150px;
 }
 mat-grid-tile img{
@@ -164,6 +210,13 @@ span.spacer {
   width: 30px;
   height: 10px;
 }
+.settings {
+  font-size: 20px;
+}
+/deep/ .left .mat-figure {
+  white-space: nowrap;
+  justify-content: left !important;
+}
 /deep/ .mat-slider-wrapper {
   height: 10px !important;
   top: 19px !important;
@@ -181,6 +234,7 @@ span.spacer {
 /deep/ .mat-slider-thumb {
   background-color: #fff !important;
 }
+
 @keyframes wave {
   0% {
     transform: rotate(-50deg);
@@ -209,7 +263,7 @@ export class IframeVideoComponent implements OnInit {
 
   playlist;
 
-  constructor(private provider: ProviderService, public snackBar: MatSnackBar) {}
+  constructor(private provider: ProviderService, public snackBar: MatSnackBar, private sanitizer: DomSanitizer) {}
 
   YTplayer = (<any>window).YT || {};
   webPlayer;
@@ -217,7 +271,23 @@ export class IframeVideoComponent implements OnInit {
   songTitle;
   songThumbnail;
   songThumbnailH;
-
+  windowSize = {
+    width: 0,
+    height: 0,
+    top: 0,
+    cols: 0,
+    colsC: 0,
+    elWidth: 0,
+    colsH: '',
+    dispSettings: false,
+    vinylTop: 0,
+    vinylWH: 0,
+    thumbWidth: 0,
+    thumbHeight: 0,
+    thumbClip: null,
+    thumbTop: 0,
+    thumbLeft: 0
+  };
   playerSettings = {
     randomPlay: 0,
     repeatMode: 1,
@@ -237,7 +307,7 @@ export class IframeVideoComponent implements OnInit {
   };
 
   ngOnInit() {
-    console.log('init', this.webPlayer);
+    this.setDimensions();
     this.provider.getSongsToPlay().subscribe((response) => {
       if(typeof response === 'string'){
         this.songId = response;
@@ -287,11 +357,12 @@ export class IframeVideoComponent implements OnInit {
     let rS = this.playerSettings;
     let dR = this.duration;
     let vL = this.playerState;
-    let checkPlay: any = -1;
+    let wS = this.windowSize;
+    let checkPlay: any = '';
 
     this.webPlayer = new this.YTplayer.Player('player', {
-      height: '700',
-      width: '1520',
+      height: wS.height - wS.top - 150,
+      width: wS.elWidth,
       videoId: id,
       playerVars: {
         controls: 0,
@@ -398,10 +469,13 @@ export class IframeVideoComponent implements OnInit {
       if(this.playerSettings.vinyl){
          this.webPlayer.setSize(1, 0);
       }else{
-        this.webPlayer.setSize(window.innerWidth, window.innerHeight);
+        this.webPlayer.setSize(document.body.clientWidth, window.innerHeight);
       }
     }else{
          this.webPlayer.setSize(1520, 700);
+    }
+    if(this.playerSettings.vinyl){
+      this.calcVinyl();
     }
   }
 
@@ -432,5 +506,80 @@ export class IframeVideoComponent implements OnInit {
   }
   rewindVideo(time:number){
     this.webPlayer.seekTo(time);
+  }
+
+  toggleSettings(){
+    this.windowSize.dispSettings = !this.windowSize.dispSettings;
+  }
+
+  setDimensions() {
+    this.windowSize.height = window.innerHeight;
+    this.windowSize.width = document.body.clientWidth;
+    this.windowSize.colsH = '74px';
+    if(this.windowSize.width>700){
+      this.windowSize.elWidth = this.windowSize.width-380;
+    }else{
+      this.windowSize.elWidth = this.windowSize.width;
+    }
+    if(this.windowSize.width>599){
+      this.windowSize.top = 64;
+    }else{
+      this.windowSize.top = 56;
+    }
+
+    this.calcVinyl();
+
+    if(this.windowSize.width>1100){
+      this.windowSize.cols = 8;
+      this.windowSize.colsC = 4;
+    } else if (this.windowSize.width>950){
+      this.windowSize.cols = 7;
+      this.windowSize.colsC = 4;
+    }else if (this.windowSize.width>840){
+      this.windowSize.cols = 6;
+      this.windowSize.colsC = 3;
+    } else if (this.windowSize.width>780){
+      this.windowSize.cols = 5;
+      this.windowSize.colsC = 3;
+    } else if (this.windowSize.width>700){
+      this.windowSize.cols = 4;
+      this.windowSize.colsC = 2;
+    }else if(this.windowSize.width>530){
+      this.windowSize.cols = 8;
+      this.windowSize.colsC = 4;
+    }else{
+      this.windowSize.colsH = '29px';
+      this.windowSize.cols = 8;
+      this.windowSize.colsC = 8;
+    }
+
+  }
+  calcVinyl(){
+    let min;
+    let mino;
+    let elWidth = this.windowSize.elWidth;
+    let elHeight = this.windowSize.height - this.windowSize.top - 150;
+    let top =  this.windowSize.top;
+    if(this.playerSettings.fullscreen){
+      elWidth = window.innerWidth;
+      elHeight = window.innerHeight;
+      top = 0;
+    }
+
+    if(elWidth < elHeight){
+      mino = elWidth;
+      min = Math.floor(mino * 0.9 * 0.3);
+      this.windowSize.vinylTop = Math.floor((elHeight-elWidth)/2 + mino*0.05);
+    }else{
+      mino = elHeight;
+      min = Math.floor(mino * 0.9 * 0.3);
+      this.windowSize.vinylTop = Math.floor(mino*0.05);
+    }
+    this.windowSize.vinylWH = Math.floor(mino * 0.9);
+    this.windowSize.thumbWidth = Math.floor(min*4/3);
+    this.windowSize.thumbHeight= min;
+    this.windowSize.thumbClip = this.sanitizer.bypassSecurityTrustStyle('circle(' + Math.floor(min/2) + 'px at center)');
+    this.windowSize.thumbTop = Math.floor(elHeight/2 + top - this.windowSize.thumbHeight/2);
+    this.windowSize.thumbLeft = Math.floor(elWidth/2 - this.windowSize.thumbWidth/2);
   }
 }
