@@ -12,6 +12,11 @@ export class AppComponent {
     this.provider.localStorageSaveData();
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.setDimensions();
+  }
+
   display: number = 0;
   top = 0;
   height = 0;
@@ -20,14 +25,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.provider.localStorageGetData();
-    this.height = window.innerHeight;
-    this.width = window.innerWidth;
-
-    if(window.innerWidth>599){
-      this.top = 64;
-    }else{
-      this.top = 56;
-    }
+    this.setDimensions();
   }
   changeView(view){
     this.display = view;
@@ -35,6 +33,16 @@ export class AppComponent {
   condChangeView(){
     if(this.display!=0){
       this.display=0;
+    }
+  }
+  setDimensions() {
+    this.height = window.innerHeight;
+    this.width = window.innerWidth;
+
+    if(window.innerWidth>599){
+      this.top = 64;
+    }else{
+      this.top = 56;
     }
   }
 }

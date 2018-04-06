@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ProviderService } from '../provider.service';
 
 @Component({
@@ -27,6 +27,10 @@ import { ProviderService } from '../provider.service';
   `]
 })
 export class SelectplaylistComponent implements OnInit {
+  @HostListener('window:resize')
+  onResize() {
+    this.width = window.innerWidth;
+  }
 
   playlists: any[] = [];
   activePlaylist: any = '';
@@ -45,9 +49,5 @@ export class SelectplaylistComponent implements OnInit {
     let f = this.playlists.find(playlists => playlists.name === pl.value);
     this.provider.changeActivePlaylist(f);
   }
-  cl(){
-    console.log('cl');
-    this.playlists = this.provider.getPlaylists();
-    console.log(this.playlists);
-  }
+
 }

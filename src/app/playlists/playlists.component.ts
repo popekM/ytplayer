@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 // this component 'owns' components to manage playlists
 @Component({
@@ -25,6 +25,10 @@ import { Component, OnInit } from '@angular/core';
   `]
 })
 export class PlaylistsComponent implements OnInit {
+  @HostListener('window:resize')
+  onResize() {
+    this.setDimensions();
+  }
 
   elWidth = 0;
   margin = 0;
@@ -32,6 +36,10 @@ export class PlaylistsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.setDimensions();
+  }
+
+  setDimensions(){
     this.elWidth = Math.floor((window.innerWidth - 100) / 2);
     this.margin = 20;
     if(this.elWidth<380){
@@ -39,5 +47,4 @@ export class PlaylistsComponent implements OnInit {
       this.margin = 0;
     }
   }
-
 }

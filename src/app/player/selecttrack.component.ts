@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ProviderService } from '../provider.service';
 
 @Component({
@@ -70,6 +70,11 @@ import { ProviderService } from '../provider.service';
     `]
 })
 export class SelecttrackComponent implements OnInit {
+  @HostListener('window:resize')
+  onResize() {
+    this.setDimensions();
+    this.changeDisplayedSongs(0);
+  }
 
   windowSize = {
     width: 0,
@@ -113,30 +118,7 @@ export class SelecttrackComponent implements OnInit {
   constructor(private provider: ProviderService) { }
 
   ngOnInit() {
-
-    this.windowSize.height = window.innerHeight;
-    this.windowSize.width = window.innerWidth;
-    if(this.windowSize.width>599){
-      this.windowSize.top = 64;
-    }else{
-      this.windowSize.top = 56;
-    }
-      this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 75;
-
-    if(this.windowSize.width>700){
-      this.windowSize.elWidth = 380;
-    }else{
-      this.windowSize.elWidth = 320;
-      if(this.windowSize.elHeight>375){
-        this.windowSize.elHeight -=150;
-      }
-    }
-    this.scrollBar.scrollBarHeight =   this.windowSize.elHeight;
-    this.scrollBar.maxSongs = Math.ceil(  this.windowSize.elHeight / 64);
-    if(this.scrollBar.maxSongs<9){
-      this.scrollBar.maxSongs = Math.ceil(  this.windowSize.elHeight / 50);
-    }
-
+    this.setDimensions();
     this.updateSongIdToDisplay(0);
     this.provider.getActivePlaylist().subscribe((response)=>{
       this.playlist = response;
@@ -226,6 +208,34 @@ export class SelecttrackComponent implements OnInit {
     if(this.scrollBar.display){
       console.log();
       this.changeDisplayedSongs(e);
+    }
+  }
+
+  setDimensions(){
+    this.windowSize.height = window.innerHeight;
+    this.windowSize.width = window.innerWidth;
+    if(this.windowSize.width>599){
+      this.windowSize.top = 64;
+    }else{
+      this.windowSize.top = 56;
+    }
+
+    if((this.windowSize.height - this.windowSize.top)>375 && this.windowSize.width<=700){
+      this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 225;
+    }else{
+      this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 75;
+    }
+
+    if(this.windowSize.width>700){
+      this.windowSize.elWidth = 380;
+    }else{
+      this.windowSize.elWidth = 320;
+
+    }
+    this.scrollBar.scrollBarHeight =   this.windowSize.elHeight;
+    this.scrollBar.maxSongs = Math.ceil(  this.windowSize.elHeight / 64);
+    if(this.scrollBar.maxSongs<9){
+      this.scrollBar.maxSongs = Math.ceil(  this.windowSize.elHeight / 50);
     }
   }
 }

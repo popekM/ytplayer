@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ProviderService } from '../provider.service';
 import { MatSnackBar } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -17,6 +17,9 @@ import { DomSanitizer } from '@angular/platform-browser';
         [style.width.px]="windowSize.elWidth"
         [style.height.px]="windowSize.height - windowSize.top - 150"
         [style.top.px]="windowSize.top">
+      </div>
+      <div class="info" *ngIf="playerSettings.info" [style.lineHeight.px]="windowSize.elHeight">
+        Pick song first...
       </div>
       <div class="vinyl" *ngIf="playerSettings.vinyl">
         <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" src="./assets/vinyl.png"
@@ -135,7 +138,10 @@ import { DomSanitizer } from '@angular/platform-browser';
   width: 100%;
   height: 100%;
 }
-
+.info{
+  text-align: center;
+  font-size: 40px;
+}
 .vinylt {
   position: absolute;
 }
@@ -260,6 +266,10 @@ span.spacer {
 `]
 })
 export class IframeVideoComponent implements OnInit {
+  @HostListener('window:resize')
+  onResize() {
+    this.setDimensions();
+  }
 
   playlist;
 
@@ -278,6 +288,7 @@ export class IframeVideoComponent implements OnInit {
     cols: 0,
     colsC: 0,
     elWidth: 0,
+    elHeight: 0,
     colsH: '',
     dispSettings: false,
     vinylTop: 0,
@@ -293,7 +304,8 @@ export class IframeVideoComponent implements OnInit {
     repeatMode: 1,
     vinyl: 0,
     playlistMode: true,
-    fullscreen: 0
+    fullscreen: 0,
+    info: false
   };
   history: string[] = [];
   playerState = {
@@ -323,6 +335,7 @@ export class IframeVideoComponent implements OnInit {
           }
         }
         this.playerSettings.playlistMode = true;
+        this.playerSettings.info = false;
       }else{
         let res: any = response;
         this.songId = res.id;
@@ -413,8 +426,13 @@ export class IframeVideoComponent implements OnInit {
   }
 
   playVideo() {
-    this.webPlayer.playVideo();
-    this.changePlayState(true);
+    if(this.webPlayer){
+      this.webPlayer.playVideo();
+      this.changePlayState(true);
+    }else{
+      console.log('aaaa');
+      this.playerSettings.info=true;
+    }
   }
 
   pauseVideo() {
@@ -439,6 +457,7 @@ export class IframeVideoComponent implements OnInit {
     this.playerSettings.fullscreen = this.playerSettings.fullscreen === 0 ? 1 : 0;
     let temp = this.playerSettings;
     let player = this.webPlayer;
+    let size = this.windowSize;
     if(this.playerSettings.fullscreen){
 
         let sb = this.snackBar;
@@ -463,7 +482,7 @@ export class IframeVideoComponent implements OnInit {
         if (isEscape) {
           document.removeEventListener('keydown', temp2);
           temp.fullscreen = 0;
-          player.setSize(1520, 700);
+          player.setSize(size.elWidth, size.elHeight);
         }
       });
       if(this.playerSettings.vinyl){
@@ -472,7 +491,7 @@ export class IframeVideoComponent implements OnInit {
         this.webPlayer.setSize(document.body.clientWidth, window.innerHeight);
       }
     }else{
-         this.webPlayer.setSize(1520, 700);
+         this.webPlayer.setSize(size.elWidth, size.elHeight);
     }
     if(this.playerSettings.vinyl){
       this.calcVinyl();
@@ -526,7 +545,7 @@ export class IframeVideoComponent implements OnInit {
     }else{
       this.windowSize.top = 56;
     }
-
+    this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 150;
     this.calcVinyl();
 
     if(this.windowSize.width>1100){
@@ -552,7 +571,9 @@ export class IframeVideoComponent implements OnInit {
       this.windowSize.cols = 8;
       this.windowSize.colsC = 8;
     }
-
+    if(this.webPlayer && !this.playerSettings.vinyl){
+       this.webPlayer.setSize(this.windowSize.elWidth, this.windowSize.elHeight);
+     }
   }
   calcVinyl(){
     let min;
