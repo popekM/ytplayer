@@ -1,11 +1,10 @@
 <button mat-raised-button color="primary" (click)="createPlaylistForm=true" *ngIf="!createPlaylistForm">Add playlist</button>
 <form (ngSubmit)="addPlaylist()" *ngIf="createPlaylistForm">
-
   <mat-form-field class="form-field">
-    <input matInput type="text" name="name" placeholder="Playlist Title:" [(ngModel)]="nameValue"/>
+    <input matInput type="text" name="name" placeholder="Playlist Title:" [(ngModel)]="nameValue" />
   </mat-form-field>
   <mat-form-field class="form-field clear">
-    <input matInput type="color" name="color" placeholder="Playlist Accent Color:" [(ngModel)]="colorValue"/>
+    <input matInput type="color" name="color" placeholder="Playlist Accent Color:" [(ngModel)]="colorValue" />
   </mat-form-field>
   <div class="bottom">
     <button mat-raised-button color="basic" (click)="abandon()"><i class="material-icons">clear</i></button>

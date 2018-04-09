@@ -14,36 +14,38 @@ import { ChangeDetectorRef } from '@angular/core';
 
   <form [formGroup]="searchForm">
     <mat-form-field class="form-field">
-     <input matInput formControlName="query" type="text" class="form-control" #forClear placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
 
-     <button mat-button *ngIf="forClear.value!='' && songsBuffer.prev!=''" matSuffix (click)="searchPrev()" mat-icon-button>
-       <i class="material-icons">keyboard_arrow_left</i>
-     </button>
-     <button mat-button *ngIf="forClear.value!='' && songsBuffer.next!=''" (click)="searchNext()" matSuffix mat-icon-button>
-       <i class="material-icons">keyboard_arrow_right</i>
-     </button>
+      <input matInput formControlName="query" type="text" class="form-control" #forClear placeholder="Search for songs..." (focus)="searchMode()" (blur)="searchModeBlur()">
 
-     <button mat-button *ngIf="forClear.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="forClear.value=''; clearInput()">
-     <i class="material-icons">clear</i>
+      <button mat-button *ngIf="forClear.value!='' && songsBuffer.prev!=''" matSuffix (click)="searchPrev()" mat-icon-button>
+        <i class="material-icons">keyboard_arrow_left</i>
       </button>
-    </mat-form-field>
+
+      <button mat-button *ngIf="forClear.value!='' && songsBuffer.next!=''" (click)="searchNext()" matSuffix mat-icon-button>
+        <i class="material-icons">keyboard_arrow_right</i>
+      </button>
+
+      <button mat-button *ngIf="forClear.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="forClear.value=''; clearInput()">
+        <i class="material-icons">clear</i>
+      </button>
+
+  </mat-form-field>
 
  </form>
  <div class="card-overlay" *ngIf="overlay">
    <mat-card class="pl-card" *ngFor="let i of songsBuffer.items">
    <mat-card-header>
-
      <mat-card-title>{{ i.title }}</mat-card-title>
-
    </mat-card-header>
+
    <img mat-card-image src="{{ i.thumbnails.medium.url }}" alt="Music video photo">
 
    <mat-card-actions>
      <button mat-button (click)="playSong(i)"><i class="material-icons">play_arrow</i></button>
      <button mat-button class="right" [matMenuTriggerFor]="menu"><i class="material-icons">playlist_add</i></button>
-      <mat-menu #menu="matMenu" [class]="hid">
-        <button *ngFor="let b of playlists" mat-menu-item (click)="addSong(i, b)" [style.borderColor]="b.color">{{ b.name }}</button>
-      </mat-menu>
+     <mat-menu #menu="matMenu" [class]="hid">
+       <button *ngFor="let b of playlists" mat-menu-item (click)="addSong(i, b)" [style.borderColor]="b.color">{{ b.name }}</button>
+     </mat-menu>
 
    </mat-card-actions>
   </mat-card>
@@ -101,16 +103,14 @@ import { ChangeDetectorRef } from '@angular/core';
       right: 40px;
       font-size: 60px;
     }
-
     .overlay i + i {
-        top: 60px;
-        right: initial;
-        left: 60%;
-      }
-      .overlay i:first-child + i {
-        left: 40%;
-      }
-
+      top: 60px;
+      right: initial;
+      left: 60%;
+    }
+    .overlay i:first-child + i {
+      left: 40%;
+    }
     .spacer {
       flex: 1 1 auto;
     }
@@ -137,7 +137,7 @@ import { ChangeDetectorRef } from '@angular/core';
       font-size: 40px;
     }
   }
-  @media only screen and (max-width: 500px) {
+@media only screen and (max-width: 500px) {
     .overlay i {
       top: 10px;
       right: 20px;
@@ -149,22 +149,22 @@ import { ChangeDetectorRef } from '@angular/core';
     .mat-button {
       padding: 0;
     }
-.card-overlay {
-  top: initial;
+    .card-overlay {
+      top: initial;
+    }
+    .mat-card{
+      padding: 10px 16px;
+    }
+    .mat-card-image{
+      margin: 6px -16px;
+    }
+    .mat-card-actions{
+      padding: 0;
+    }
+    .mat-card-header {
+      height: 40px;
+    }
 }
-.mat-card{
-  padding: 10px 16px;
-}
-.mat-card-image{
-  margin: 6px -16px;
-}
-.mat-card-actions{
-  padding: 0;
-}
-.mat-card-header {
-  height: 40px;
-}
-  }
   `]
 })
 export class SearchformComponent implements OnInit {
@@ -183,13 +183,10 @@ export class SearchformComponent implements OnInit {
   overlay: boolean = false;
   playlists: any[];
 
-  constructor(private provider: ProviderService, private ref: ChangeDetectorRef) {
-
-  }
+  constructor(private provider: ProviderService, private ref: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.playlists = this.provider.getPlaylists();
-
     this.searchForm = new FormGroup({
       'query': new FormControl('')
     });
@@ -200,7 +197,6 @@ export class SearchformComponent implements OnInit {
       .subscribe(value => {
         if (value.length > 2) {
           this.provider.execQ(value, 14, '');
-          console.log('search execution, query: ', value);
         } else {
           this.songsBuffer = {
             length: 0,
@@ -212,11 +208,11 @@ export class SearchformComponent implements OnInit {
       });
   }
 
-  searchNext(){
+  searchNext() {
     this.provider.execQ(this.searchForm.get('query').value, 14, this.songsBuffer.next);
   }
 
-  searchPrev(){
+  searchPrev() {
     this.provider.execQ(this.searchForm.get('query').value, 14, this.songsBuffer.prev);
   }
 
@@ -229,8 +225,6 @@ export class SearchformComponent implements OnInit {
       });
       this.initalized = true;
     }
-
-    // display overlay
     this.overlay = true;
   }
 
@@ -256,11 +250,11 @@ export class SearchformComponent implements OnInit {
     document.getElementsByClassName('mat-menu-panel')[0].innerHTML = '';
   }
 
-  playSong(id){
-       this.provider.playSong(id);
-       this.exitSearchMode();
-       this.ref.detectChanges();
-       this.emitter.emit();
+  playSong(id) {
+    this.provider.playSong(id);
+    this.exitSearchMode();
+    this.ref.detectChanges();
+    this.emitter.emit();
   }
 
 }

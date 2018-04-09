@@ -4,24 +4,23 @@ import { Component, OnInit, HostListener } from '@angular/core';
 @Component({
   selector: 'app-playlists',
   template: `
-
     <app-displayplaylists [style.width.px]="elWidth" [style.margin.px]="margin"><app-addplaylist></app-addplaylist></app-displayplaylists>
     <app-displaytracks [style.width.px]="elWidth" [style.margin.px]="margin"></app-displaytracks>
   `,
   styles: [`
     :host(){
       float:left;
+      background: #212121;
     }
     app-displayplaylists {
       display: block;
-      background: black;
+      background: #000;
       float: right;
     }
     app-displaytracks{
       display: block;
       float: right;
     }
-
   `]
 })
 export class PlaylistsComponent implements OnInit {
@@ -39,10 +38,10 @@ export class PlaylistsComponent implements OnInit {
     this.setDimensions();
   }
 
-  setDimensions(){
+  setDimensions() {
     this.elWidth = Math.floor((window.innerWidth - 100) / 2);
     this.margin = 20;
-    if(this.elWidth<380){
+    if (this.elWidth < 380) {
       this.elWidth = window.innerWidth;
       this.margin = 0;
     }

@@ -1,6 +1,10 @@
-app-player{
+app-player {
   display: block;
   overflow: hidden;
+}
+app-playlists {
+  width: 100%;
+  height: 100%;
 }
 .hidden {
   display: none;
@@ -12,7 +16,7 @@ span.header {
   margin-left: 10px;
 }
 .active {
-  color: #b10d4e;
+  color: #c2185b;
 }
 .menuN {
   display: none;

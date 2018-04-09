@@ -30,22 +30,6 @@ import { ProviderService } from '../provider.service';
       float: left;
       overflow: hidden;
     }
-    .scroolbar {
-      width: 20px;
-      float: left;
-      background: rgb(62, 62, 62)
-    }
-    .scroolbar .pointer {
-      position: relative;
-      top: 20px;
-      width: 20px;
-      height: 50px;
-      background: rgb(112, 112, 112)
-    }
-    .scroolbar .pointer:hover{
-      background: #c2185b;
-      cursor: grab;
-    }
     mat-toolbar-row {
       height: 64px;
       overflow: hidden;
@@ -54,15 +38,31 @@ import { ProviderService } from '../provider.service';
       cursor: pointer;
     }
     mat-toolbar-row:not(.active):hover {
-      background: #313131;
+      background: #303030;
     }
     img {
       width: 80px;
       height: 60px;
       padding-right: 5px;
       position: relative;
-    text-align: center;
-    color: white;
+      text-align: center;
+      color: #fff;
+    }
+    .scroolbar {
+      width: 20px;
+      float: left;
+      background: #303030;
+    }
+    .scroolbar .pointer {
+      position: relative;
+      top: 20px;
+      width: 20px;
+      height: 50px;
+      background: #424242;
+    }
+    .scroolbar .pointer:hover{
+      background: #c2185b;
+      cursor: grab;
     }
     .active {
       background: #c2185b;
@@ -96,21 +96,20 @@ export class SelecttrackComponent implements OnInit {
     maxSongs: 10,
     scrollBarHeight: 0,
     calcHeight: function(len) {
-      this.height = Math.floor(this.maxSongs/len*this.scrollBarHeight);
-      console.log('height', this.height);
+      this.height = Math.floor(this.maxSongs / len * this.scrollBarHeight);
     },
     defineDisplay: function(pl) {
-      if(pl.tracks.length>this.maxSongs){
+      if (pl.tracks.length > this.maxSongs) {
         this.display = true;
         this.calcHeight(pl.tracks.length);
-      }else{
+      } else {
         this.display = false;
       }
     },
-    calcOffset: function(i, l){
-      let end = this.scrollBarHeight-this.height;
+    calcOffset: function(i, l) {
+      let end = this.scrollBarHeight - this.height;
       let temp = l - this.maxSongs;
-      let step = end/temp;
+      let step = end / temp;
       this.top = step * i;
     }
   }
@@ -120,7 +119,7 @@ export class SelecttrackComponent implements OnInit {
   ngOnInit() {
     this.setDimensions();
     this.updateSongIdToDisplay(0);
-    this.provider.getActivePlaylist().subscribe((response)=>{
+    this.provider.getActivePlaylist().subscribe((response) => {
       this.playlist = response;
       this.scrollBar.defineDisplay(this.playlist);
       this.updateSongIdToDisplay(0);
@@ -129,113 +128,106 @@ export class SelecttrackComponent implements OnInit {
       this.idActive = <string>response;
       let index = this.playlist.tracks.findIndex(i => this.idActive === i.id);
       let indexA = this.songIdToDisplay.findIndex(i => index === i);
-      if(indexA===(-1)){
+      if (indexA === (-1)) {
         this.changeDisplayedSongs(index);
       }
     });
   }
 
-  playSong(id){
+  playSong(id) {
     this.provider.playSong(id);
     this.idActive = id;
   }
-  updateSongIdToDisplay(start){
+
+  updateSongIdToDisplay(start) {
     let length;
-    if(this.playlist.tracks.length>this.scrollBar.maxSongs){
-      length=this.scrollBar.maxSongs;
-    }else{
-      length=this.playlist.tracks.length;
+    if (this.playlist.tracks.length > this.scrollBar.maxSongs) {
+      length = this.scrollBar.maxSongs;
+    } else {
+      length = this.playlist.tracks.length;
     }
     this.songIdToDisplay = [];
-    for(let i=0; i<length; i++){
-      this.songIdToDisplay[i]=start++;
+    for (let i = 0; i < length; i++) {
+      this.songIdToDisplay[i] = start++;
     }
   }
 
-  changeDisplayedSongs(e){
+  changeDisplayedSongs(e) {
     let index;
-    if(e.pageY && !e.deltaY){
-      console.log('pagey', e);
-      let fromTop = e.pageY-139;
-      let step = this.scrollBar.scrollBarHeight/this.playlist.tracks.length;
-      index = Math.floor(fromTop/step);
-    }else if(e.deltaY){
-      if(e.deltaY>0){
-        console.log('plus', this.scrollBar.index);
-        index=this.scrollBar.index + 1;
-      }else{
-        index=this.scrollBar.index - 1;
+    if (e.pageY && !e.deltaY) {
+      let fromTop = e.pageY - 139;
+      let step = this.scrollBar.scrollBarHeight / this.playlist.tracks.length;
+      index = Math.floor(fromTop / step);
+    } else if (e.deltaY) {
+      if (e.deltaY > 0) {
+        index = this.scrollBar.index + 1;
+      } else {
+        index = this.scrollBar.index - 1;
       }
-      console.log(index);
-    }else{
+    } else {
       index = e;
     }
-    let up = Math.floor((this.scrollBar.maxSongs-1)/2);
-    let down = Math.ceil((this.scrollBar.maxSongs-1)/2);
+    let up = Math.floor((this.scrollBar.maxSongs - 1) / 2);
+    let down = Math.ceil((this.scrollBar.maxSongs - 1) / 2);
 
-    if(!e.deltaY){
-      if(index-up < 0){
+    if (!e.deltaY) {
+      if (index - up < 0) {
         index = 0;
-        console.log('zerujemy');
-      }else if (index+down+1>this.playlist.tracks.length){
-        index = this.playlist.tracks.length-this.scrollBar.maxSongs;
-      }else{
-        index = index-up;
+      } else if (index + down + 1 > this.playlist.tracks.length) {
+        index = this.playlist.tracks.length - this.scrollBar.maxSongs;
+      } else {
+        index = index - up;
       }
-    }else{
-      if(index<0){
-        index=0;
-      }else if(index+this.scrollBar.maxSongs>this.playlist.tracks.length){
-        console.log('aaa');
-        index=this.playlist.tracks.length-this.scrollBar.maxSongs;
+    } else {
+      if (index < 0) {
+        index = 0;
+      } else if (index + this.scrollBar.maxSongs > this.playlist.tracks.length) {
+        index = this.playlist.tracks.length - this.scrollBar.maxSongs;
       }
     }
-    //  console.log('pageY: ', e.pageY, ' fromtop: ', fromTop, ' length: ', this.playlist.tracks.length, ' height: ', this.scrollBar.height, ' step: ', step, ' index: ', index);
-    console.log('ii', index);
     this.scrollBar.index = index;
     this.updateSongIdToDisplay(index);
     this.scrollBar.calcOffset(index, this.playlist.tracks.length);
   }
 
-  changeDisplayedSongsMove(e){
-    if(e.buttons){
+  changeDisplayedSongsMove(e) {
+    if (e.buttons) {
       this.changeDisplayedSongs(e);
     }
   }
 
   scroolEvent(e) {
     e.preventDefault();
-    if(this.scrollBar.display){
-      console.log();
+    if (this.scrollBar.display) {
       this.changeDisplayedSongs(e);
     }
   }
 
-  setDimensions(){
+  setDimensions() {
     this.windowSize.height = window.innerHeight;
     this.windowSize.width = window.innerWidth;
-    if(this.windowSize.width>599){
+    if (this.windowSize.width > 599) {
       this.windowSize.top = 64;
-    }else{
+    } else {
       this.windowSize.top = 56;
     }
 
-    if((this.windowSize.height - this.windowSize.top)>375 && this.windowSize.width<=700){
+    if ((this.windowSize.height - this.windowSize.top) > 375 && this.windowSize.width <= 700) {
       this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 225;
-    }else{
+    } else {
       this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 75;
     }
 
-    if(this.windowSize.width>700){
+    if (this.windowSize.width > 700) {
       this.windowSize.elWidth = 380;
-    }else{
+    } else {
       this.windowSize.elWidth = 320;
 
     }
-    this.scrollBar.scrollBarHeight =   this.windowSize.elHeight;
-    this.scrollBar.maxSongs = Math.ceil(  this.windowSize.elHeight / 64);
-    if(this.scrollBar.maxSongs<9){
-      this.scrollBar.maxSongs = Math.ceil(  this.windowSize.elHeight / 50);
+    this.scrollBar.scrollBarHeight = this.windowSize.elHeight;
+    this.scrollBar.maxSongs = Math.ceil(this.windowSize.elHeight / 64);
+    if (this.scrollBar.maxSongs < 9) {
+      this.scrollBar.maxSongs = Math.ceil(this.windowSize.elHeight / 50);
     }
   }
 }

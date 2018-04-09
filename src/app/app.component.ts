@@ -8,10 +8,9 @@ import { ProviderService } from './provider.service';
 })
 export class AppComponent {
   @HostListener('window:beforeunload')
-  saveData(){
+  saveData() {
     this.provider.localStorageSaveData();
   }
-
   @HostListener('window:resize')
   onResize() {
     this.setDimensions();
@@ -21,27 +20,30 @@ export class AppComponent {
   top = 0;
   height = 0;
   width = 0;
-  constructor(private provider: ProviderService){}
+
+  constructor(private provider: ProviderService) { }
 
   ngOnInit() {
     this.provider.localStorageGetData();
     this.setDimensions();
   }
-  changeView(view){
+
+  changeView(view) {
     this.display = view;
   }
-  condChangeView(){
-    if(this.display!=0){
-      this.display=0;
+
+  condChangeView() {
+    if (this.display != 0) {
+      this.display = 0;
     }
   }
+
   setDimensions() {
     this.height = window.innerHeight;
     this.width = window.innerWidth;
-
-    if(window.innerWidth>599){
+    if (window.innerWidth > 599) {
       this.top = 64;
-    }else{
+    } else {
       this.top = 56;
     }
   }

@@ -12,7 +12,6 @@ import { ProviderService } from '../provider.service';
       <mat-toolbar-row *ngFor="let i of playlist.tracks; let j =index">
         <span class="title">{{ i.title }}</span>
         <span class="spacer"></span>
-
         <i class="material-icons" (click)="moveTop(i)" [class.dark]="j<2">vertical_align_top</i>
         <i class="material-icons" (click)="moveUp(i)" [class.dark]="j==0">arrow_upward</i>
         <i class="material-icons" (click)="moveDown(i)" [class.dark]="j==playlist.tracks.length-1" >arrow_downward</i>
@@ -26,9 +25,8 @@ import { ProviderService } from '../provider.service';
       margin: 0;
       padding: 20px;
     }
-
     i {
-      color: #808080;
+      color: #424242;
       cursor: pointer;
     }
     i:hover:not(.dark){
@@ -45,13 +43,11 @@ import { ProviderService } from '../provider.service';
     .material-icons {
       padding: 0 6px;
     }
-
-  .spacer {
-    flex: 1 1 auto;
-  }
-
+    .spacer {
+      flex: 1 1 auto;
+    }
     .dark{
-      color: #373737;
+      color: #000;
       cursor: default;
     }
     mat-toolbar-row{
@@ -81,11 +77,11 @@ export class DisplaytracksComponent implements OnInit {
     this.provider.manageTracks(i, 0);
   }
 
-  moveUp(i){
+  moveUp(i) {
     this.provider.manageTracks(i, 1);
   }
 
-  moveDown(i){
+  moveDown(i) {
     this.provider.manageTracks(i, 2);
   }
 
@@ -93,7 +89,7 @@ export class DisplaytracksComponent implements OnInit {
     this.provider.manageTracks(i, 3);
   }
 
-  delete(i){
+  delete(i) {
     this.provider.manageTracks(i, 4);
   }
 }

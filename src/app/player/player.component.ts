@@ -11,13 +11,13 @@ export class PlayerComponent implements OnInit {
     this.setDimensions();
   }
 
-  displayTracks = false;
   constructor() { }
 
   ngOnInit() {
     this.setDimensions();
   }
 
+  displayTracks = false;
   windowSize = {
     width: 0,
     height: 0,
@@ -28,6 +28,7 @@ export class PlayerComponent implements OnInit {
   toggleTrackList() {
     this.displayTracks=!this.displayTracks;
   }
+
   setDimensions() {
     this.windowSize.height = window.innerHeight;
     this.windowSize.width = window.innerWidth;

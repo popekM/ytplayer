@@ -12,21 +12,19 @@ interface Playlist {
 @Component({
   selector: 'app-displayplaylists',
   template: `
-
   <h2>Playlists:<ng-content></ng-content></h2>
-
     <mat-nav-list>
       <a mat-list-item
         *ngFor="let i of playlists"
         [class.active]="i == activePlaylist"
         [style.borderColor]="i.color"
         (click)="changePlaylist(i)">
-          {{ i.name }}
-          <span>&nbsp;( {{ i.tracks.length }} )</span>
-              <span class="spacer"></span>
-              <i class="material-icons" (click)="deletePlaylist(i)">delete</i>
-      </a>
 
+        {{ i.name }}
+        <span>&nbsp;( {{ i.tracks.length }} )</span>
+        <span class="spacer"></span>
+        <i class="material-icons" (click)="deletePlaylist(i)">delete</i>
+      </a>
     </mat-nav-list>
   `,
   styles: [`
@@ -39,10 +37,10 @@ interface Playlist {
       background: #b10d4e;
     }
     a {
-      border-left: 5px solid red;
+      border-left: 5px solid;
     }
     span, i {
-      color: #787878;
+      color: #424242;
     }
     i:hover{
       color: #fff;
@@ -68,7 +66,7 @@ export class DisplayplaylistsComponent implements OnInit {
 
   ngOnInit() {
     this.playlists = this.provider.getPlaylists();
-    this.provider.getActivePlaylist().subscribe((response)=>{
+    this.provider.getActivePlaylist().subscribe((response) => {
       this.activePlaylist = response;
     });
   }
@@ -77,11 +75,11 @@ export class DisplayplaylistsComponent implements OnInit {
     this.provider.changeActivePlaylist(pl);
   }
 
-  deletePlaylist(i){
+  deletePlaylist(i) {
     let pR = this.provider;
     this.dialogW = this.dialog.open(ConfirmationDialogComponent);
     this.dialogW.afterClosed().subscribe(result => {
-      if(result){
+      if (result) {
         pR.deletePlaylist(i);
       }
     });

@@ -9,8 +9,7 @@
 
   <button *ngIf="display==0" class="menuN" mat-button (click)="changeView(1)"><i class="material-icons">library_music</i></button>
   <button *ngIf="display==1" class="menuN" mat-button (click)="changeView(0)"><i class="material-icons">playlist_play</i></button>
-
 </mat-toolbar>
 
 <app-player [class.hidden]="display!=0" [style.width.px]="width" [style.height.px]="height-top"></app-player>
-<app-playlists *ngIf="display==1" [style.height.px]="height-top"></app-playlists>
+<app-playlists *ngIf="display==1"></app-playlists>

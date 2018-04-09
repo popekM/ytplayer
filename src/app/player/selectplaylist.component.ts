@@ -9,7 +9,6 @@ import { ProviderService } from '../provider.service';
       <mat-option *ngFor="let i of playlists" [value]="i.name" [style.borderColor]="i.color">{{i.name}}</mat-option>
     </mat-select>
   </mat-form-field>
-
   `,
   styles: [`
       mat-option {
@@ -35,19 +34,20 @@ export class SelectplaylistComponent implements OnInit {
   playlists: any[] = [];
   activePlaylist: any = '';
   width = 0;
+
   constructor(private provider: ProviderService) { }
 
   ngOnInit() {
     this.width = window.innerWidth;
     this.playlists = this.provider.getPlaylists();
-    this.provider.getActivePlaylist().subscribe((response)=>{
+    this.provider.getActivePlaylist().subscribe((response) => {
       this.activePlaylist = response;
     });
   }
 
   changePlaylist(pl) {
-    let f = this.playlists.find(playlists => playlists.name === pl.value);
-    this.provider.changeActivePlaylist(f);
+    let temp = this.playlists.find(playlists => playlists.name === pl.value);
+    this.provider.changeActivePlaylist(temp);
   }
 
 }

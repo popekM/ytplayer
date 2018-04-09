@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
       Are you sure to delete this playlist?
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="true">Yes</button>
-      <button mat-button mat-dialog-close>No</button>
+      <button mat-button [mat-dialog-close]="true"><i class="material-icons">done</i></button>
+      <button mat-button mat-dialog-close><i class="material-icons">clear</i></button>
     </mat-dialog-actions>
   `,
   styles: []

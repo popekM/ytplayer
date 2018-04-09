@@ -10,7 +10,7 @@ export class AddplaylistComponent implements OnInit {
 
   createPlaylistForm: boolean = false;
   nameValue: string = '';
-  colorValue: string = '#d94800';
+  colorValue: string = '#7ce8ff';
 
   constructor(private provider: ProviderService) { }
 
@@ -27,13 +27,13 @@ export class AddplaylistComponent implements OnInit {
     newPlaylist.color = this.colorValue;
     this.provider.addPlaylist(newPlaylist);
     this.nameValue = '';
-    this.colorValue = '#d94800';
+    this.colorValue = '#7ce8ff';
     this.createPlaylistForm = false;
   }
 
   abandon() {
     this.nameValue = '';
-    this.colorValue = '#d94800';
+    this.colorValue = '#7ce8ff';
     this.createPlaylistForm = false;
   }
 }

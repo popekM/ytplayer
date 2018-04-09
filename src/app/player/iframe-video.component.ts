@@ -5,12 +5,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-iframe-video',
   template: `
-
     <div id="player-container"
       [class.fullscreen]="playerSettings.fullscreen"
       (click)="playerSettings.fullscreen? toggleFullscreen():''"
       [style.width.px]="windowSize.elWidth"
       [style.height.px]="windowSize.height - windowSize.top - 150">
+
       <div class="vinylt"
         *ngIf="!playerSettings.vinyl"
         [class.fullscreen]="playerSettings.fullscreen"
@@ -18,16 +18,22 @@ import { DomSanitizer } from '@angular/platform-browser';
         [style.height.px]="windowSize.height - windowSize.top - 150"
         [style.top.px]="windowSize.top">
       </div>
+
       <div class="info" *ngIf="playerSettings.info" [style.lineHeight.px]="windowSize.elHeight">
         Pick song first...
       </div>
+
       <div class="vinyl" *ngIf="playerSettings.vinyl">
+
         <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'" src="./assets/vinyl.png"
           [style.top.px]="windowSize.vinylTop"
           [style.width.px]="windowSize.vinylWH"
           [style.height.px]="windowSize.vinylWH"
           alt="vinyl">
-        <img [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'"
+
+        <img
+          *ngIf="songThumbnailH"
+          [style.animationPlayState]="playerState.inPlay ? 'running' : 'paused'"
           class="thumbnail"
           [src]="songThumbnailH"
           [style.width.px]="windowSize.thumbWidth"
@@ -36,76 +42,81 @@ import { DomSanitizer } from '@angular/platform-browser';
           [style.left.px]="windowSize.thumbLeft"
           [style.clipPath]="windowSize.thumbClip"
           alt="thumbnail">
+
       </div>
 
       <div id="player"></div>
 
     </div>
+
     <div class="controls"
       *ngIf="!playerSettings.fullscreen"
       [style.width.px]="windowSize.elWidth">
 
-    <mat-grid-list [cols]="windowSize.cols" [rowHeight]="windowSize.colsH">
+      <mat-grid-list [cols]="windowSize.cols" [rowHeight]="windowSize.colsH">
 
-      <mat-grid-tile colspan="1" rowspan="2" *ngIf="windowSize.width>1100 || (windowSize.width<=700 && windowSize.width>530)">
-        <img [src]="songThumbnail" alt="thumbnail">
-      </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="2" *ngIf="windowSize.width>1100 || (windowSize.width<=700 && windowSize.width>530)">
+          <img *ngIf="songThumbnail" [src]="songThumbnail" alt="thumbnail">
+        </mat-grid-tile>
 
-      <mat-grid-tile
-        [class.left]="windowSize.width<=530"
-        [colspan]="windowSize.width>530?1:6"
-        [rowspan]="windowSize.width>530?2:1"
-        *ngIf="windowSize.width>840 || windowSize.width<=700">
+        <mat-grid-tile
+          [class.left]="windowSize.width<=530"
+          [colspan]="windowSize.width>530?1:6"
+          [rowspan]="windowSize.width>530?2:1"
+          *ngIf="windowSize.width>840 || windowSize.width<=700">
 
-          {{songTitle}}
-      </mat-grid-tile>
+            {{songTitle}}
 
-      <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=530">
-      <button mat-icon-button color="primary" (click)="toggleSettings()">
-        <i class="material-icons settings" [class.active]="windowSize.dispSettings">settings</i>
-      </button>
-      </mat-grid-tile>
+        </mat-grid-tile>
+
+        <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=530">
+
+          <button mat-icon-button color="primary" (click)="toggleSettings()">
+            <i class="material-icons settings" [class.active]="windowSize.dispSettings">settings</i>
+          </button>
+
+        </mat-grid-tile>
 
       <mat-grid-tile [colspan]="windowSize.colsC" [rowspan]="windowSize.width>530?1:2">
-        <i class="material-icons" (click)="playPreviousSong()" [class.dark]="history.length==0">skip_previous</i>
+
+        <i class="material-icons" (click)="playPreviousSong()" [class.dark]="history.length<2">skip_previous</i>
         <i class="material-icons big" (click)="playVideo()" *ngIf="!playerState.inPlay">play_arrow</i>
         <i class="material-icons big" (click)="pauseVideo()" *ngIf="playerState.inPlay">pause</i>
         <i class="material-icons" (click)="playNextSong()">skip_next</i>
+
       </mat-grid-tile>
 
       <mat-grid-tile class="controlsW" [colspan]="windowSize.width>530?2:8" rowspan="2" *ngIf="windowSize.width>1550 || (windowSize.width<=530 && windowSize.dispSettings)">
 
-          <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
-          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
-          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
-          <span class="spacer">&nbsp;</span>
-          <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
-          <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
-          <mat-slider thumbLabel min="0" max="100" step="1" [(ngModel)]="playerState.volume" (click)="setVolume(playerState.volume)"></mat-slider>
-          <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
-          <span class="spacer">&nbsp;</span>
-
-          <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
-          <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
+        <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
+        <span class="spacer">&nbsp;</span>
+        <i class="material-icons small active volume" *ngIf="playerState.volume===0" (click)="setVolume(10)">volume_off</i>
+        <i class="material-icons small volume" *ngIf="playerState.volume!==0" (click)="setVolume(0)">volume_mute</i>
+        <mat-slider thumbLabel min="0" max="100" step="1" [(ngModel)]="playerState.volume" (click)="setVolume(playerState.volume)"></mat-slider>
+        <i class="material-icons small volume" (click)="setVolume(100)" [class.active]="playerState.volume===100">volume_up</i>
+        <span class="spacer">&nbsp;</span>
+        <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
+        <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
 
       </mat-grid-tile>
 
       <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=1550 && windowSize.width>530">
 
-          <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
-          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
-          <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
-          <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
-          <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
+        <i class="material-icons small" (click)="toggleRandom()" [class.active]="playerSettings.randomPlay">shuffle</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode!==2" [class.active]="playerSettings.repeatMode">repeat</i>
+        <i class="material-icons small" (click)="toggleRepeat()" *ngIf="playerSettings.repeatMode===2" [class.active]="playerSettings.repeatMode">repeat_one</i>
+        <i class="material-icons small" (click)="toggleVinyl()" [class.active]="playerSettings.vinyl">album</i>
+        <i class="material-icons small" (click)="toggleFullscreen()" [class.active]="playerSettings.fullscreen">fullscreen</i>
 
       </mat-grid-tile>
-
-
 
       <mat-grid-tile *ngIf="!windowSize.dispSettings" [colspan]="windowSize.colsC" [rowspan]="windowSize.width>530?1:2">
-        <mat-slider class="progressbar" min="0" max="{{duration.value}}" step="1" [(ngModel)]="duration.current" (click)="rewindVideo(duration.current)"></mat-slider>
-      </mat-grid-tile>
 
+        <mat-slider class="progressbar" min="0" max="{{duration.value}}" step="1" [(ngModel)]="duration.current" (click)="rewindVideo(duration.current)"></mat-slider>
+
+      </mat-grid-tile>
 
       <mat-grid-tile class="controlsW" colspan="2" rowspan="1" *ngIf="windowSize.width<=1550 && windowSize.width>530">
 
@@ -116,19 +127,14 @@ import { DomSanitizer } from '@angular/platform-browser';
 
       </mat-grid-tile>
 
-
-
     </mat-grid-list>
-
-
-
-
-
 
     </div>
   `,
   styles: [`
-
+#player-container {
+  overflow:hidden;
+}
 .vinyl {
   background-image: url('../assets/discbg.jpg');
   background-repeat: no-repeat;
@@ -158,9 +164,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   z-index: 2;
   animation: rotate 8s linear infinite;
 }
-#player-container {
-  overflow:hidden;
-}
 .fullscreen {
   position: absolute;
   width: 100% !important;
@@ -174,23 +177,25 @@ mat-slider.progressbar{
 }
 .controls {
   position: relative;
-  height: 150px;
+    height: 150px;
+    background: #212121;
+
 }
 mat-grid-tile img{
   max-width: 90%;
 }
 .dark{
-  color: rgb(54, 54, 54);
+  color: #212121;
   cursor: default;
 }
 .active{
   color: #c2185b;
 }
 .active:hover{
-  color: #f13c83;
+  color: #cc3b74;
 }
 i {
-  color: #626262;
+  color: #646464;
   font-size: 35px;
   margin-left: 10px;
   margin-right: 10px;
@@ -255,14 +260,11 @@ span.spacer {
 @keyframes rotate {
   0% {
     transform: rotate(0);
-    filter:hue-rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
-    filter:hue-rotate(0deg);
   }
 }
-
 `]
 })
 export class IframeVideoComponent implements OnInit {
@@ -270,16 +272,29 @@ export class IframeVideoComponent implements OnInit {
   onResize() {
     this.setDimensions();
   }
-
   @HostListener('window:beforeunload')
-  saveSettings(){
+  saveSettings() {
     this.provider.localStorageSaveSettings(this.playerSettings.randomPlay, this.playerSettings.repeatMode, this.playerSettings.vinyl, this.playerState.volume);
   }
+  @HostListener('document:keydown', ['$event'])
+    handleKeydown(e: Event) {
+      if(this.playerSettings.fullscreen){
+        let evt: any = e || window.event;
+        let isEscape = false;
+        if ("key" in evt) {
+          isEscape = (evt.key == "Escape" || evt.key == "Esc");
+        } else {
+          isEscape = (evt.keyCode == 27);
+        }
+        if (isEscape) {
+          this.toggleFullscreen();
+        }
+      }
+    }
+
+  constructor(private provider: ProviderService, public snackBar: MatSnackBar, private sanitizer: DomSanitizer) { }
 
   playlist;
-
-  constructor(private provider: ProviderService, public snackBar: MatSnackBar, private sanitizer: DomSanitizer) {}
-
   YTplayer = (<any>window).YT || {};
   webPlayer;
   songId;
@@ -318,12 +333,13 @@ export class IframeVideoComponent implements OnInit {
     volume: 100
   };
   duration = {
-    value: 1,
+    value: 100,
     current: 0,
     interval: undefined
   };
 
   ngOnInit() {
+    // get player settings from local storage
     let temp = this.provider.localStorageGetSettings();
     this.playerSettings.randomPlay = temp.randomPlay;
     this.playerSettings.repeatMode = temp.repeatMode;
@@ -331,15 +347,17 @@ export class IframeVideoComponent implements OnInit {
     this.playerState.volume = temp.volume;
 
     this.setDimensions();
+
+    // get stream of YT video ID's to play
     this.provider.getSongsToPlay().subscribe((response) => {
-      if(typeof response === 'string'){
+      if (typeof response === 'string') {
         this.songId = response;
         this.history.push(this.songId);
-        if(this.history.length>20){
+        if (this.history.length > 20) {
           this.history.shift();
         }
-        for(let i=0; i<this.playlist.tracks.length; i++){
-          if(this.playlist.tracks[i].id === this.songId){
+        for (let i = 0; i < this.playlist.tracks.length; i++) {
+          if (this.playlist.tracks[i].id === this.songId) {
             this.songTitle = this.playlist.tracks[i].title;
             this.songThumbnail = this.playlist.tracks[i].thumbnails.medium.url;
             this.songThumbnailH = this.playlist.tracks[i].thumbnails.high.url;
@@ -347,7 +365,7 @@ export class IframeVideoComponent implements OnInit {
         }
         this.playerSettings.playlistMode = true;
         this.playerSettings.info = false;
-      }else{
+      } else {
         let res: any = response;
         this.songId = res.id;
         this.songTitle = res.title;
@@ -358,17 +376,14 @@ export class IframeVideoComponent implements OnInit {
       this.onYouTubeIframeAPIReady(this.songId);
     });
 
-    this.provider.getActivePlaylist().subscribe((response)=>{
+    this.provider.getActivePlaylist().subscribe((response) => {
       this.playlist = response;
     });
-
-
-
-
-  }
-  ngOnDestroy(){
   }
 
+  // functions
+
+  // YT iframe api function
   onYouTubeIframeAPIReady(id) {
 
     if (this.webPlayer) {
@@ -405,7 +420,7 @@ export class IframeVideoComponent implements OnInit {
     function onPlayerReady(event) {
       event.target.setVolume(vL.volume);
       dR.value = event.target.getDuration();
-      if(dR.interval){
+      if (dR.interval) {
         clearInterval(dR.interval);
       }
       dR.interval = setInterval(function() {
@@ -417,16 +432,14 @@ export class IframeVideoComponent implements OnInit {
 
     function stateChange(event) {
       let state = event.target.getPlayerState();
-      console.log('state: ', state);
       if (state === 0) {
-        if(rS.playlistMode){
+        if (rS.playlistMode) {
           pR.playNext(rS.randomPlay, rS.repeatMode);
         }
-      } else if (state === -1){
+      } else if (state === -1) {
         let temp = 0;
         checkPlay = setTimeout(function() {
-          if((event.target.getPlayerState() == -1 || event.target.getPlayerState() == 3) && temp == 0){
-            console.log('pause start');
+          if ((event.target.getPlayerState() == -1 || event.target.getPlayerState() == 3) && temp == 0) {
             event.target.pauseVideo();
             event.target.playVideo();
             temp = 1;
@@ -436,18 +449,20 @@ export class IframeVideoComponent implements OnInit {
     }
   }
 
+  // player controls functions
   playVideo() {
-    if(this.webPlayer){
+    if (this.webPlayer) {
       this.webPlayer.playVideo();
       this.changePlayState(true);
-    }else{
-      console.log('aaaa');
-      this.playerSettings.info=true;
+    } else {
+      this.playerSettings.info = true;
     }
   }
 
   pauseVideo() {
-    this.webPlayer.pauseVideo();
+    if(this.webPlayer){
+      this.webPlayer.pauseVideo();
+    }
     this.changePlayState(false);
   }
 
@@ -469,42 +484,27 @@ export class IframeVideoComponent implements OnInit {
     let temp = this.playerSettings;
     let player = this.webPlayer;
     let size = this.windowSize;
-    if(this.playerSettings.fullscreen){
+    if (this.playerSettings.fullscreen) {
 
-        let sb = this.snackBar;
-        sb.open('To exit fullscreen mode press \'ESC\'', 'OK', {
+      let sb = this.snackBar;
+      sb.open('To exit fullscreen mode press \'ESC\'', 'OK', {
+        duration: 2500
+      });
+      setTimeout(function() {
+        sb.open('To toggle browser fullscreen mode press \'F11\'', 'OK', {
           duration: 2500
         });
-        setTimeout(function() {
-          sb.open('To toggle browser fullscreen mode press \'F11\'', 'OK', {
-            duration: 2500
-          });
-        }, 3000);
+      }, 3000);
 
-
-      document.addEventListener('keydown', function temp2(e) {
-        let evt:any = e || window.event;
-        let isEscape = false;
-        if ("key" in evt) {
-          isEscape = (evt.key == "Escape" || evt.key == "Esc");
-        } else {
-          isEscape = (evt.keyCode == 27);
-        }
-        if (isEscape) {
-          document.removeEventListener('keydown', temp2);
-          temp.fullscreen = 0;
-          player.setSize(size.elWidth, size.elHeight);
-        }
-      });
-      if(this.playerSettings.vinyl){
-         this.webPlayer.setSize(1, 0);
-      }else{
+      if (this.playerSettings.vinyl) {
+        this.webPlayer.setSize(1, 0);
+      } else {
         this.webPlayer.setSize(document.body.clientWidth, window.innerHeight);
       }
-    }else{
-         this.webPlayer.setSize(size.elWidth, size.elHeight);
+    } else {
+      this.webPlayer.setSize(size.elWidth, size.elHeight);
     }
-    if(this.playerSettings.vinyl){
+    if (this.playerSettings.vinyl) {
       this.calcVinyl();
     }
   }
@@ -514,12 +514,13 @@ export class IframeVideoComponent implements OnInit {
   }
 
   playNextSong() {
-    console.log('play next', this.playerSettings.repeatMode);
-    this.provider.playNext(this.playerSettings.randomPlay, this.playerSettings.repeatMode);
+    if(this.webPlayer && this.webPlayer.pauseVideo){
+      this.provider.playNext(this.playerSettings.randomPlay, this.playerSettings.repeatMode);
+    }
   }
 
   playPreviousSong() {
-    if(this.history.length>1){
+    if (this.history.length > 1) {
       this.history.pop();
       let songId = this.history.pop();
       this.provider.playSong(songId);
@@ -530,90 +531,93 @@ export class IframeVideoComponent implements OnInit {
     this.playerState.inPlay = inPlay;
   }
 
-  setVolume(volume:number){
+  setVolume(volume: number) {
     this.playerState.volume = volume;
-    if(this.webPlayer){
+    if (this.webPlayer) {
       this.webPlayer.setVolume(volume);
     }
   }
-  rewindVideo(time:number){
+  rewindVideo(time: number) {
     this.webPlayer.seekTo(time);
   }
 
-  toggleSettings(){
+  toggleSettings() {
     this.windowSize.dispSettings = !this.windowSize.dispSettings;
   }
 
+  // functions to calculate different elements dimensions
+  // called on component init and on resive event
   setDimensions() {
     this.windowSize.height = window.innerHeight;
     this.windowSize.width = document.body.clientWidth;
     this.windowSize.colsH = '74px';
-    if(this.windowSize.width>700){
-      this.windowSize.elWidth = this.windowSize.width-380;
-    }else{
+    if (this.windowSize.width > 700) {
+      this.windowSize.elWidth = this.windowSize.width - 380;
+    } else {
       this.windowSize.elWidth = this.windowSize.width;
     }
-    if(this.windowSize.width>599){
+    if (this.windowSize.width > 599) {
       this.windowSize.top = 64;
-    }else{
+    } else {
       this.windowSize.top = 56;
     }
     this.windowSize.elHeight = this.windowSize.height - this.windowSize.top - 150;
     this.calcVinyl();
 
-    if(this.windowSize.width>1100){
+    if (this.windowSize.width > 1100) {
       this.windowSize.cols = 8;
       this.windowSize.colsC = 4;
-    } else if (this.windowSize.width>950){
+    } else if (this.windowSize.width > 950) {
       this.windowSize.cols = 7;
       this.windowSize.colsC = 4;
-    }else if (this.windowSize.width>840){
+    } else if (this.windowSize.width > 840) {
       this.windowSize.cols = 6;
       this.windowSize.colsC = 3;
-    } else if (this.windowSize.width>780){
+    } else if (this.windowSize.width > 780) {
       this.windowSize.cols = 5;
       this.windowSize.colsC = 3;
-    } else if (this.windowSize.width>700){
+    } else if (this.windowSize.width > 700) {
       this.windowSize.cols = 4;
       this.windowSize.colsC = 2;
-    }else if(this.windowSize.width>530){
+    } else if (this.windowSize.width > 530) {
       this.windowSize.cols = 8;
       this.windowSize.colsC = 4;
-    }else{
+    } else {
       this.windowSize.colsH = '29px';
       this.windowSize.cols = 8;
       this.windowSize.colsC = 8;
     }
-    if(this.webPlayer && !this.playerSettings.vinyl){
-       this.webPlayer.setSize(this.windowSize.elWidth, this.windowSize.elHeight);
-     }
+    if (this.webPlayer && !this.playerSettings.vinyl) {
+      this.webPlayer.setSize(this.windowSize.elWidth, this.windowSize.elHeight);
+    }
   }
-  calcVinyl(){
+
+  calcVinyl() {
     let min;
     let mino;
     let elWidth = this.windowSize.elWidth;
     let elHeight = this.windowSize.height - this.windowSize.top - 150;
-    let top =  this.windowSize.top;
-    if(this.playerSettings.fullscreen){
+    let top = this.windowSize.top;
+    if (this.playerSettings.fullscreen) {
       elWidth = window.innerWidth;
       elHeight = window.innerHeight;
       top = 0;
     }
 
-    if(elWidth < elHeight){
+    if (elWidth < elHeight) {
       mino = elWidth;
       min = Math.floor(mino * 0.9 * 0.3);
-      this.windowSize.vinylTop = Math.floor((elHeight-elWidth)/2 + mino*0.05);
-    }else{
+      this.windowSize.vinylTop = Math.floor((elHeight - elWidth) / 2 + mino * 0.05);
+    } else {
       mino = elHeight;
       min = Math.floor(mino * 0.9 * 0.3);
-      this.windowSize.vinylTop = Math.floor(mino*0.05);
+      this.windowSize.vinylTop = Math.floor(mino * 0.05);
     }
     this.windowSize.vinylWH = Math.floor(mino * 0.9);
-    this.windowSize.thumbWidth = Math.floor(min*4/3);
-    this.windowSize.thumbHeight= min;
-    this.windowSize.thumbClip = this.sanitizer.bypassSecurityTrustStyle('circle(' + Math.floor(min/2) + 'px at center)');
-    this.windowSize.thumbTop = Math.floor(elHeight/2 + top - this.windowSize.thumbHeight/2);
-    this.windowSize.thumbLeft = Math.floor(elWidth/2 - this.windowSize.thumbWidth/2);
+    this.windowSize.thumbWidth = Math.floor(min * 4 / 3);
+    this.windowSize.thumbHeight = min;
+    this.windowSize.thumbClip = this.sanitizer.bypassSecurityTrustStyle('circle(' + Math.floor(min / 2) + 'px at center)');
+    this.windowSize.thumbTop = Math.floor(elHeight / 2 + top - this.windowSize.thumbHeight / 2);
+    this.windowSize.thumbLeft = Math.floor(elWidth / 2 - this.windowSize.thumbWidth / 2);
   }
 }
