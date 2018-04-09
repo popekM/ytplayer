@@ -67,7 +67,7 @@ import { ProviderService } from '../provider.service';
 })
 export class DisplaytracksComponent implements OnInit {
 
-  playlist: any[];
+  playlist: any;
 
   constructor(private provider: ProviderService) { }
 

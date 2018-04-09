@@ -271,6 +271,11 @@ export class IframeVideoComponent implements OnInit {
     this.setDimensions();
   }
 
+  @HostListener('window:beforeunload')
+  saveSettings(){
+    this.provider.localStorageSaveSettings(this.playerSettings.randomPlay, this.playerSettings.repeatMode, this.playerSettings.vinyl, this.playerState.volume);
+  }
+
   playlist;
 
   constructor(private provider: ProviderService, public snackBar: MatSnackBar, private sanitizer: DomSanitizer) {}
@@ -319,6 +324,12 @@ export class IframeVideoComponent implements OnInit {
   };
 
   ngOnInit() {
+    let temp = this.provider.localStorageGetSettings();
+    this.playerSettings.randomPlay = temp.randomPlay;
+    this.playerSettings.repeatMode = temp.repeatMode;
+    this.playerSettings.vinyl = temp.vinyl;
+    this.playerState.volume = temp.volume;
+
     this.setDimensions();
     this.provider.getSongsToPlay().subscribe((response) => {
       if(typeof response === 'string'){
@@ -521,7 +532,9 @@ export class IframeVideoComponent implements OnInit {
 
   setVolume(volume:number){
     this.playerState.volume = volume;
-    this.webPlayer.setVolume(volume);
+    if(this.webPlayer){
+      this.webPlayer.setVolume(volume);
+    }
   }
   rewindVideo(time:number){
     this.webPlayer.seekTo(time);

@@ -245,4 +245,28 @@ export class ProviderService {
     this.activePlaylistState = this.data[0];
     this.activePlaylist.next(this.activePlaylistState);
   }
+
+  localStorageSaveSettings(randomPlay, repeatMode, vinyl, volume) {
+      console.log('save settings');
+      let temp = {
+        randomPlay,
+        repeatMode,
+        vinyl,
+        volume
+      }
+      localStorage.setItem('settings', JSON.stringify(temp));
+    }
+
+    localStorageGetSettings(){
+      let temp = JSON.parse(localStorage.getItem('settings'));
+      if(temp == null){
+        temp = {
+          randomPlay: 0,
+          repeatMode: 1,
+          vinyl: 0,
+          volume: 100
+        };
+      }
+      return temp;
+    }
 }

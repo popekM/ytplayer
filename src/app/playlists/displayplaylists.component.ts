@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ProviderService } from '../provider.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
+
+interface Playlist {
+  name: string,
+  color: string,
+  tracks: any
+};
+
 @Component({
   selector: 'app-displayplaylists',
   template: `
@@ -53,7 +60,7 @@ import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 })
 export class DisplayplaylistsComponent implements OnInit {
 
-  playlists: any[];
+  playlists: Playlist[] = [];
   activePlaylist: any;
   dialogW: MatDialogRef<ConfirmationDialogComponent>;
 
