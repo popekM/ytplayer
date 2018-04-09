@@ -136,7 +136,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   overflow:hidden;
 }
 .vinyl {
-  background-image: url('../assets/discbg.jpg');
+  background-image: url('./assets/discbg.jpg');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
