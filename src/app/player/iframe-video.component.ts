@@ -398,10 +398,16 @@ export class IframeVideoComponent implements OnInit {
     let vL = this.playerState;
     let wS = this.windowSize;
     let checkPlay: any = '';
+    let wPlWidth = wS.elWidth;
+    let wPlHeight = wS.elHeight;
+    if(rS.fullscreen){
+       wPlWidth = document.body.clientWidth;
+       wPlHeight = window.innerHeight;
+    }
 
     this.webPlayer = new this.YTplayer.Player('player', {
-      height: wS.height - wS.top - 150,
-      width: wS.elWidth,
+      height: wPlHeight,
+      width: wPlWidth,
       videoId: id,
       playerVars: {
         controls: 0,
